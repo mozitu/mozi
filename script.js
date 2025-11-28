@@ -2469,10 +2469,18 @@ function sendSmsFromAI(contactName, content) {
     // 检查用户是否正在和该联系人聊天
     const isInChat = chatDetail.classList.contains('active') && originalChatName === contact.name;
     
-    // 添加到聊天记录（每句话一条消息）
+    // 添加到聊天记录（每句话一条消息，解析表情）
     const history = getChatHistory(contact.name);
     messagesToSend.forEach(msg => {
-        history.push({ text: msg, type: 'received' });
+        // 解析消息中的表情
+        const parts = parseEmojiInMessage(msg);
+        parts.forEach(part => {
+            if (part.type === 'emoji') {
+                history.push({ text: `[表情:${part.name}]`, type: 'received', isEmoji: true, emojiUrl: part.url });
+            } else if (part.content.trim()) {
+                history.push({ text: part.content.trim(), type: 'received' });
+            }
+        });
         // 如果用户不在该聊天界面，增加未读计数
         if (!isInChat) {
             addUnreadCount(contact.name);
@@ -2483,7 +2491,15 @@ function sendSmsFromAI(contactName, content) {
     // 如果用户正在该聊天界面，直接添加消息气泡
     if (isInChat) {
         messagesToSend.forEach(msg => {
-            addChatBubble(msg, 'received', false);
+            // 解析并显示表情
+            const parts = parseEmojiInMessage(msg);
+            parts.forEach(part => {
+                if (part.type === 'emoji') {
+                    addEmojiBubble(part.url, 'received', false, part.name);
+                } else if (part.content.trim()) {
+                    addChatBubble(part.content.trim(), 'received', false);
+                }
+            });
         });
     } else {
         // 不在聊天界面时显示通知
