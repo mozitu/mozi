@@ -20,6 +20,7 @@ const summaryModalClose = document.getElementById('summaryModalClose');
 const summaryContent = document.getElementById('summaryContent');
 const summaryCancel = document.getElementById('summaryCancel');
 const summarySave = document.getElementById('summarySave');
+const summaryAIGenerate = document.getElementById('summaryAIGenerate');
 const drawer = document.getElementById('drawer');
 const drawerOverlay = document.getElementById('drawerOverlay');
 const appGrid = document.getElementById('appGrid');
@@ -39,6 +40,29 @@ const spaceApp = document.getElementById('spaceApp');
 const spaceView = document.getElementById('spaceView');
 const spaceBack = document.getElementById('spaceBack');
 const spaceContent = document.getElementById('spaceContent');
+const phoneApp = document.getElementById('phoneApp');
+const phoneView = document.getElementById('phoneView');
+const phoneBack = document.getElementById('phoneBack');
+const phoneContacts = document.getElementById('phoneContacts');
+const contactPhoneView = document.getElementById('contactPhoneView');
+const contactPhoneBack = document.getElementById('contactPhoneBack');
+const contactPhoneName = document.getElementById('contactPhoneName');
+const phoneUserAvatar = document.getElementById('phoneUserAvatar');
+const phoneUserName = document.getElementById('phoneUserName');
+const phoneAppSms = document.getElementById('phoneAppSms');
+const phoneAppCall = document.getElementById('phoneAppCall');
+const phoneAppNote = document.getElementById('phoneAppNote');
+const phoneAppBrowser = document.getElementById('phoneAppBrowser');
+const phoneAppDiary = document.getElementById('phoneAppDiary');
+const phoneRefreshBtn = document.getElementById('phoneRefreshBtn');
+const phoneAppDetailView = document.getElementById('phoneAppDetailView');
+const phoneAppDetailBack = document.getElementById('phoneAppDetailBack');
+const phoneAppDetailTitle = document.getElementById('phoneAppDetailTitle');
+const phoneAppDetailContent = document.getElementById('phoneAppDetailContent');
+const phoneSmsTabbar = document.getElementById('phoneSmsTabbar');
+const phoneTabMessages = document.getElementById('phoneTabMessages');
+const phoneTabContacts = document.getElementById('phoneTabContacts');
+const phoneUserCard = document.getElementById('phoneUserCard');
 const addPostBtn = document.getElementById('addPostBtn');
 const postEditView = document.getElementById('postEditView');
 const postEditBack = document.getElementById('postEditBack');
@@ -97,6 +121,14 @@ const avatarUrlInput = document.getElementById('avatarUrlInput');
 const avatarFileInput = document.getElementById('avatarFileInput');
 const avatarClearBtn = document.getElementById('avatarClearBtn');
 const avatarSaveBtn = document.getElementById('avatarSaveBtn');
+const userAvatarEdit = document.getElementById('userAvatarEdit');
+const userAvatarModal = document.getElementById('userAvatarModal');
+const userAvatarModalClose = document.getElementById('userAvatarModalClose');
+const userAvatarPreview = document.getElementById('userAvatarPreview');
+const userAvatarUrlInput = document.getElementById('userAvatarUrlInput');
+const userAvatarFileInput = document.getElementById('userAvatarFileInput');
+const userAvatarClearBtn = document.getElementById('userAvatarClearBtn');
+const userAvatarSaveBtn = document.getElementById('userAvatarSaveBtn');
 const addContactBtn = document.getElementById('addContactBtn');
 const contactAddView = document.getElementById('contactAddView');
 const contactAddBack = document.getElementById('contactAddBack');
@@ -114,6 +146,7 @@ const worldBookView = document.getElementById('worldBookView');
 const worldBookBack = document.getElementById('worldBookBack');
 const worldBookContent = document.getElementById('worldBookContent');
 const importWorldBookBtn = document.getElementById('importWorldBookBtn');
+const addWorldBookEntryBtn = document.getElementById('addWorldBookEntryBtn');
 const worldBookEditView = document.getElementById('worldBookEditView');
 const worldBookEditBack = document.getElementById('worldBookEditBack');
 const worldBookEditTitle = document.getElementById('worldBookEditTitle');
@@ -140,6 +173,7 @@ const presetView = document.getElementById('presetView');
 const presetBack = document.getElementById('presetBack');
 const presetContent = document.getElementById('presetContent');
 const importPresetBtn = document.getElementById('importPresetBtn');
+const addPresetEntryBtn = document.getElementById('addPresetEntryBtn');
 const presetEditView = document.getElementById('presetEditView');
 const presetEditBack = document.getElementById('presetEditBack');
 const presetEditTitle = document.getElementById('presetEditTitle');
@@ -155,6 +189,35 @@ const guessBtn = document.getElementById('guessBtn');
 const guessHint = document.getElementById('guessHint');
 const guessAttempts = document.getElementById('guessAttempts');
 const restartGame = document.getElementById('restartGame');
+const emojiApp = document.getElementById('emojiApp');
+const emojiManagerView = document.getElementById('emojiManagerView');
+const emojiManagerBack = document.getElementById('emojiManagerBack');
+const emojiManagerContent = document.getElementById('emojiManagerContent');
+const addEmojiBtn = document.getElementById('addEmojiBtn');
+const emojiAddModal = document.getElementById('emojiAddModal');
+const emojiAddModalClose = document.getElementById('emojiAddModalClose');
+const emojiNameInput = document.getElementById('emojiNameInput');
+const emojiUrlInput = document.getElementById('emojiUrlInput');
+const emojiPreview = document.getElementById('emojiPreview');
+const emojiAddCancel = document.getElementById('emojiAddCancel');
+const emojiAddConfirm = document.getElementById('emojiAddConfirm');
+const chatEmojiBtn = document.getElementById('chatEmojiBtn');
+const emojiPanel = document.getElementById('emojiPanel');
+const emojiPanelClose = document.getElementById('emojiPanelClose');
+const emojiGrid = document.getElementById('emojiGrid');
+const importEmojiBtn = document.getElementById('importEmojiBtn');
+const emojiFileInput = document.getElementById('emojiFileInput');
+const offlineScene = document.getElementById('offlineScene');
+const offlineSceneInfo = document.getElementById('offlineSceneInfo');
+const currentSceneName = document.getElementById('currentSceneName');
+const sceneDateTime = document.getElementById('sceneDateTime');
+const sceneWeather = document.getElementById('sceneWeather');
+const sceneModal = document.getElementById('sceneModal');
+const sceneModalClose = document.getElementById('sceneModalClose');
+const customSceneInput = document.getElementById('customSceneInput');
+const sceneDescription = document.getElementById('sceneDescription');
+const sceneClear = document.getElementById('sceneClear');
+const sceneSave = document.getElementById('sceneSave');
 
 const defaultFontStack = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif";
 
@@ -209,6 +272,10 @@ summarySave.addEventListener('click', () => {
     saveSummaryContent();
 });
 
+summaryAIGenerate.addEventListener('click', () => {
+    generateAISummary();
+});
+
 summaryModal.addEventListener('click', (e) => {
     if (e.target === summaryModal) {
         closeSummaryModal();
@@ -221,11 +288,16 @@ sendButton.addEventListener('click', () => {
 });
 
 // 输入框回车事件
-messageInput.addEventListener('keypress', (e) => {
+messageInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         sendMessage();
     }
+});
+
+// 线下模式输入框自动调整高度
+messageInput.addEventListener('input', () => {
+    autoResizeTextarea(messageInput);
 });
 
 // 更多按钮点击事件 - 打开抽屉
@@ -266,11 +338,31 @@ chatDetailSend.addEventListener('click', () => {
     sendChatMessage();
 });
 
-chatDetailInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
+chatDetailInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
         sendChatMessage();
     }
 });
+
+// 自动调整输入框高度
+chatDetailInput.addEventListener('input', () => {
+    autoResizeTextarea(chatDetailInput);
+});
+
+function autoResizeTextarea(textarea) {
+    // 先重置高度以获取正确的 scrollHeight
+    textarea.style.height = '44px';
+    const newHeight = Math.max(44, Math.min(textarea.scrollHeight, 150));
+    textarea.style.height = newHeight + 'px';
+    
+    // 如果内容超过最大高度，显示滚动条
+    if (textarea.scrollHeight > 150) {
+        textarea.style.overflowY = 'auto';
+    } else {
+        textarea.style.overflowY = 'hidden';
+    }
+}
 
 // 联系人编辑
 chatDetailMore.addEventListener('click', () => {
@@ -341,6 +433,53 @@ avatarClearBtn.addEventListener('click', () => {
 
 avatarSaveBtn.addEventListener('click', () => {
     saveAvatarChange();
+});
+
+// 用户头像编辑
+let tempUserAvatarUrl = '';
+
+userAvatarEdit.addEventListener('click', () => {
+    openUserAvatarModal();
+});
+
+userAvatarModalClose.addEventListener('click', () => {
+    closeUserAvatarModal();
+});
+
+userAvatarModal.addEventListener('click', (e) => {
+    if (e.target === userAvatarModal) {
+        closeUserAvatarModal();
+    }
+});
+
+userAvatarUrlInput.addEventListener('input', () => {
+    const url = userAvatarUrlInput.value.trim();
+    if (url) {
+        updateUserAvatarPreview(url);
+    }
+});
+
+userAvatarFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const dataUrl = event.target.result;
+            userAvatarUrlInput.value = dataUrl;
+            updateUserAvatarPreview(dataUrl);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+userAvatarClearBtn.addEventListener('click', () => {
+    tempUserAvatarUrl = '';
+    userAvatarUrlInput.value = '';
+    resetUserAvatarPreview();
+});
+
+userAvatarSaveBtn.addEventListener('click', () => {
+    saveUserAvatarChange();
 });
 
 // 添加联系人
@@ -433,6 +572,60 @@ spaceBack.addEventListener('click', () => {
     closeSpaceView();
 });
 
+// 手机App
+phoneApp.addEventListener('click', () => {
+    openPhoneView();
+});
+
+phoneBack.addEventListener('click', () => {
+    closePhoneView();
+});
+
+contactPhoneBack.addEventListener('click', () => {
+    closeContactPhoneView();
+});
+
+phoneAppDetailBack.addEventListener('click', () => {
+    closePhoneAppDetail();
+});
+
+// 手机APP点击事件
+phoneAppSms.addEventListener('click', () => {
+    openPhoneApp('sms');
+});
+
+phoneAppCall.addEventListener('click', () => {
+    openPhoneApp('call');
+});
+
+phoneAppNote.addEventListener('click', () => {
+    openPhoneApp('note');
+});
+
+phoneAppBrowser.addEventListener('click', () => {
+    openPhoneApp('browser');
+});
+
+phoneAppDiary.addEventListener('click', () => {
+    openPhoneApp('diary');
+});
+
+phoneRefreshBtn.addEventListener('click', () => {
+    generatePhoneContent();
+});
+
+phoneTabMessages.addEventListener('click', () => {
+    switchPhoneSmsTab('messages');
+});
+
+phoneTabContacts.addEventListener('click', () => {
+    switchPhoneSmsTab('contacts');
+});
+
+phoneUserCard.addEventListener('click', () => {
+    showPhoneOwnerPersona();
+});
+
 addPostBtn.addEventListener('click', () => {
     openPostEdit();
 });
@@ -469,6 +662,10 @@ worldBookBack.addEventListener('click', () => {
 
 importWorldBookBtn.addEventListener('click', () => {
     worldBookFileInput.click();
+});
+
+addWorldBookEntryBtn.addEventListener('click', () => {
+    addNewWorldBookEntry();
 });
 
 worldBookFileInput.addEventListener('change', (e) => {
@@ -527,6 +724,10 @@ presetBack.addEventListener('click', () => {
 
 importPresetBtn.addEventListener('click', () => {
     presetFileInput.click();
+});
+
+addPresetEntryBtn.addEventListener('click', () => {
+    addNewPresetEntry();
 });
 
 presetFileInput.addEventListener('change', (e) => {
@@ -780,12 +981,16 @@ function loadPosts() {
         if (post.author === 'user') {
             const userData = getUserData();
             authorName = userData.name || '我';
-            avatarHtml = `<div class="post-avatar">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-            </div>`;
+            if (userData.avatar) {
+                avatarHtml = `<div class="post-avatar"><img src="${userData.avatar}"></div>`;
+            } else {
+                avatarHtml = `<div class="post-avatar">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>`;
+            }
         } else {
             const saved = getContactData(post.author);
             authorName = saved?.nickname || post.author;
@@ -835,6 +1040,975 @@ function deletePost(postId) {
     loadPosts();
 }
 
+// ========== 手机功能 ==========
+function openPhoneView() {
+    phoneView.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    loadPhoneContacts();
+    saveViewState('phone');
+}
+
+function closePhoneView() {
+    phoneView.classList.remove('active');
+    restoreBodyScrollIfIdle();
+    saveViewState('drawer');
+}
+
+function loadPhoneContacts() {
+    phoneContacts.innerHTML = '';
+    
+    const customContacts = getCustomContacts();
+    
+    if (customContacts.length === 0) {
+        phoneContacts.innerHTML = '<div class="phone-empty">暂无联系人<br>请先在短信app中添加联系人</div>';
+        return;
+    }
+    
+    customContacts.forEach((contact, index) => {
+        const saved = getContactData(contact.name);
+        const displayName = saved?.nickname || contact.name;
+        const avatarColor = saved?.color || contact.color || '';
+        const avatarImg = saved?.avatar || '';
+        
+        const item = document.createElement('div');
+        item.className = 'contact-item';
+        item.style.animationDelay = `${index * 0.05}s`;
+        
+        let avatarHtml;
+        if (avatarImg) {
+            avatarHtml = `<div class="contact-avatar"><img src="${avatarImg}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`;
+        } else {
+            avatarHtml = `<div class="contact-avatar" ${avatarColor ? `style="background: ${avatarColor};"` : ''}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>`;
+        }
+        
+        item.innerHTML = `
+            ${avatarHtml}
+            <div class="contact-info">
+                <div class="contact-name">${displayName}</div>
+                <div class="contact-phone">点击查看手机</div>
+            </div>
+        `;
+        
+        item.addEventListener('click', () => {
+            openContactPhoneView(contact.name);
+        });
+        
+        phoneContacts.appendChild(item);
+    });
+}
+
+let currentViewingContact = '';
+
+function openContactPhoneView(contactName) {
+    currentViewingContact = contactName;
+    const saved = getContactData(contactName);
+    const displayName = saved?.nickname || contactName;
+    const avatarColor = saved?.color || '';
+    const avatarImg = saved?.avatar || '';
+    
+    contactPhoneName.textContent = `${displayName} 的手机`;
+    phoneUserName.textContent = displayName;
+    
+    // 设置手机框架中的头像
+    if (avatarImg) {
+        phoneUserAvatar.innerHTML = `<img src="${avatarImg}">`;
+        if (avatarColor) {
+            phoneUserAvatar.style.background = avatarColor;
+        } else {
+            phoneUserAvatar.style.background = '';
+        }
+    } else {
+        phoneUserAvatar.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        `;
+        phoneUserAvatar.style.background = avatarColor || '';
+    }
+    
+    // 更新手机状态栏时间
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const timeElement = document.querySelector('.phone-time');
+    if (timeElement) {
+        timeElement.textContent = `${hours}:${minutes}`;
+    }
+    
+    // 设置随机壁纸
+    const phoneScreen = document.querySelector('.phone-screen');
+    if (phoneScreen) {
+        const randomId = Math.floor(Math.random() * 1000);
+        phoneScreen.style.backgroundImage = `url('https://picsum.photos/400/800?random=${randomId}')`;
+    }
+    
+    contactPhoneView.classList.add('active');
+    saveViewState('contactPhone', { contactName });
+}
+
+function closeContactPhoneView() {
+    contactPhoneView.classList.remove('active');
+    currentViewingContact = '';
+    saveViewState('phone');
+}
+
+// 显示手机主人的人设
+function showPhoneOwnerPersona() {
+    if (!currentViewingContact) return;
+    
+    const saved = getContactData(currentViewingContact);
+    const displayName = saved?.nickname || currentViewingContact;
+    
+    // 从customContacts获取人设
+    const customContacts = getCustomContacts();
+    const contactInfo = customContacts.find(c => c.name === currentViewingContact);
+    const persona = contactInfo?.persona || '暂无人设';
+    
+    // 创建弹窗
+    const modal = document.createElement('div');
+    modal.className = 'phone-persona-modal';
+    modal.innerHTML = `
+        <div class="phone-persona-content">
+            <div class="phone-persona-header">
+                <h3>${displayName} 的人设</h3>
+                <button class="phone-persona-close">×</button>
+            </div>
+            <div class="phone-persona-body">
+                ${persona ? escapeHtml(persona).replace(/\n/g, '<br>') : '<span style="color: var(--text-secondary);">暂无人设信息</span>'}
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // 添加动画
+    requestAnimationFrame(() => {
+        modal.classList.add('active');
+    });
+    
+    // 关闭按钮事件
+    modal.querySelector('.phone-persona-close').addEventListener('click', () => {
+        modal.classList.remove('active');
+        setTimeout(() => modal.remove(), 300);
+    });
+    
+    // 点击背景关闭
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 300);
+        }
+    });
+}
+
+let currentPhoneApp = '';
+
+function openPhoneApp(appType) {
+    currentPhoneApp = appType;
+    const displayName = phoneUserName.textContent;
+    
+    switch(appType) {
+        case 'sms':
+            phoneAppDetailTitle.textContent = '短信';
+            phoneSmsTabbar.style.display = 'flex';
+            phoneAppDetailContent.style.padding = '0';
+            phoneAppDetailContent.style.gap = '0';
+            switchPhoneSmsTab('messages');
+            break;
+        case 'call':
+            phoneAppDetailTitle.textContent = '通话记录';
+            phoneSmsTabbar.style.display = 'none';
+            phoneAppDetailContent.style.padding = '20px';
+            phoneAppDetailContent.style.gap = '12px';
+            loadPhoneAppCall();
+            break;
+        case 'note':
+            phoneAppDetailTitle.textContent = '便签';
+            phoneSmsTabbar.style.display = 'none';
+            phoneAppDetailContent.style.padding = '20px';
+            phoneAppDetailContent.style.gap = '12px';
+            loadPhoneAppNote();
+            break;
+        case 'browser':
+            phoneAppDetailTitle.textContent = '浏览器';
+            phoneSmsTabbar.style.display = 'none';
+            phoneAppDetailContent.style.padding = '20px';
+            phoneAppDetailContent.style.gap = '12px';
+            loadPhoneAppBrowser();
+            break;
+        case 'diary':
+            phoneAppDetailTitle.textContent = '日记';
+            phoneSmsTabbar.style.display = 'none';
+            phoneAppDetailContent.style.padding = '20px';
+            phoneAppDetailContent.style.gap = '12px';
+            loadPhoneAppDiary();
+            break;
+    }
+    
+    phoneAppDetailView.classList.add('active');
+    saveViewState('phoneAppDetail', { contactName: currentViewingContact, appType });
+}
+
+function switchPhoneSmsTab(tab) {
+    // 切换tab样式
+    if (tab === 'messages') {
+        phoneTabMessages.classList.add('active');
+        phoneTabContacts.classList.remove('active');
+        loadPhoneSmsMessages();
+    } else {
+        phoneTabMessages.classList.remove('active');
+        phoneTabContacts.classList.add('active');
+        loadPhoneSmsContacts();
+    }
+}
+
+let inPhoneChatDetail = false; // 是否在手机短信聊天详情中
+
+function closePhoneAppDetail() {
+    // 如果在聊天详情中，返回到消息列表
+    if (inPhoneChatDetail && currentPhoneApp === 'sms') {
+        inPhoneChatDetail = false;
+        phoneSmsTabbar.style.display = 'flex';
+        switchPhoneSmsTab('messages');
+        return;
+    }
+    
+    phoneAppDetailView.classList.remove('active');
+    phoneSmsTabbar.style.display = 'none';
+    inPhoneChatDetail = false;
+    saveViewState('contactPhone', { contactName: currentViewingContact });
+}
+
+// 加载短信APP的消息列表
+function loadPhoneSmsMessages() {
+    phoneAppDetailContent.innerHTML = '';
+    phoneAppDetailContent.style.display = 'block';
+    phoneAppDetailContent.style.padding = '0';
+    
+    // 获取用户设置
+    const userSettings = getUserSettings();
+    const userName = userSettings.name || '用户';
+    
+    // 获取联系人给用户起的备注（如果有）
+    const userNickname = getGeneratedPhoneData(currentViewingContact, 'userNickname') || userName;
+    
+    // 获取和用户的真实聊天记录
+    const realChatHistory = getChatHistory(currentViewingContact);
+    
+    // 获取AI生成的对话
+    const generatedConversations = getGeneratedPhoneData(currentViewingContact, 'conversations') || [];
+    
+    // 合并所有对话，和用户的对话置顶
+    const allConversations = [];
+    
+    // 第一条：和用户的真实对话（如果有）
+    if (realChatHistory.length > 0) {
+        // 获取最后一条消息作为预览
+        let lastMessage = realChatHistory[realChatHistory.length - 1];
+        let preview = '';
+        if (lastMessage.isEmoji) {
+            preview = '[表情]';
+        } else {
+            preview = lastMessage.text || '';
+        }
+        
+        allConversations.push({
+            friend: userNickname, // 使用联系人给用户起的备注
+            messages: realChatHistory,
+            isRealChat: true,
+            preview: preview
+        });
+    }
+    
+    // 其他AI生成的对话
+    generatedConversations.forEach(conv => {
+        const lastMessage = conv.messages[conv.messages.length - 1];
+        allConversations.push({
+            ...conv,
+            isRealChat: false,
+            preview: lastMessage ? lastMessage.text : '暂无消息'
+        });
+    });
+    
+    if (allConversations.length === 0) {
+        phoneAppDetailContent.innerHTML = '<div class="app-content-empty" style="padding: 40px 20px;">暂无消息记录<br><br>点击右上角刷新按钮让AI生成对话</div>';
+        return;
+    }
+    
+    // 获取用户头像
+    const userAvatar = userSettings.avatar || '';
+    
+    // 显示消息列表
+    allConversations.forEach((conv, index) => {
+        const item = document.createElement('div');
+        item.className = 'phone-message-item';
+        item.style.animationDelay = `${index * 0.05}s`;
+        item.style.animation = 'fadeIn 0.3s ease forwards';
+        
+        // 如果是和用户的对话，显示用户头像
+        let avatarHtml;
+        if (conv.isRealChat && userAvatar) {
+            avatarHtml = `<div class="phone-message-avatar"><img src="${userAvatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`;
+        } else {
+            avatarHtml = `<div class="phone-message-avatar">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>`;
+        }
+        
+        item.innerHTML = `
+            ${avatarHtml}
+            <div class="phone-message-info">
+                <div class="phone-message-header">
+                    <span class="phone-message-name">${conv.friend}</span>
+                    <span class="phone-message-time">刚刚</span>
+                </div>
+                <div class="phone-message-preview">${escapeHtml(conv.preview)}</div>
+            </div>
+        `;
+        
+        // 点击查看对话详情
+        item.addEventListener('click', () => {
+            if (conv.isRealChat) {
+                viewRealChatHistory(conv.messages);
+            } else {
+                viewPhoneConversation(conv);
+            }
+        });
+        
+        phoneAppDetailContent.appendChild(item);
+    });
+}
+
+// 查看单个对话详情
+function viewPhoneConversation(conversation) {
+    // 隐藏tabbar，标记进入聊天详情
+    phoneSmsTabbar.style.display = 'none';
+    inPhoneChatDetail = true;
+    
+    phoneAppDetailContent.innerHTML = '';
+    phoneAppDetailContent.style.display = 'flex';
+    phoneAppDetailContent.style.flexDirection = 'column';
+    phoneAppDetailContent.style.padding = '0';
+    
+    // 创建消息区域
+    const messagesArea = document.createElement('div');
+    messagesArea.className = 'phone-chat-messages';
+    messagesArea.style.cssText = 'flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px;';
+    
+    conversation.messages.forEach(msg => {
+        const bubble = document.createElement('div');
+        const bubbleType = msg.sender === '我' ? 'sent' : 'received';
+        bubble.className = `phone-chat-bubble ${bubbleType}`;
+        bubble.textContent = msg.text;
+        messagesArea.appendChild(bubble);
+    });
+    
+    phoneAppDetailContent.appendChild(messagesArea);
+    
+    // 添加只读输入框
+    const inputArea = document.createElement('div');
+    inputArea.className = 'phone-chat-input-area';
+    inputArea.innerHTML = `
+        <input type="text" class="phone-chat-input" placeholder="此处不能输入..." disabled readonly>
+        <button class="phone-chat-send" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+        </button>
+    `;
+    phoneAppDetailContent.appendChild(inputArea);
+    
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+}
+
+// 查看真实聊天记录（和用户的对话）
+function viewRealChatHistory(history) {
+    // 隐藏tabbar，标记进入聊天详情
+    phoneSmsTabbar.style.display = 'none';
+    inPhoneChatDetail = true;
+    
+    phoneAppDetailContent.innerHTML = '';
+    phoneAppDetailContent.style.display = 'flex';
+    phoneAppDetailContent.style.flexDirection = 'column';
+    phoneAppDetailContent.style.padding = '0';
+    
+    // 创建消息区域
+    const messagesArea = document.createElement('div');
+    messagesArea.className = 'phone-chat-messages';
+    messagesArea.style.cssText = 'flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px;';
+    
+    // 显示所有消息，对调视角
+    // 在联系人的手机中：
+    // - 用户发送的消息(sent) -> 他收到的(received)
+    // - 他发送的消息(received) -> 他发送的(sent)
+    history.forEach((msg) => {
+        const bubble = document.createElement('div');
+        
+        // 对调视角
+        let bubbleType;
+        if (msg.type === 'sent') {
+            bubbleType = 'received';
+        } else {
+            bubbleType = 'sent';
+        }
+        
+        bubble.className = `phone-chat-bubble ${bubbleType}`;
+        
+        if (msg.isEmoji && msg.emojiUrl) {
+            bubble.innerHTML = `<img src="${msg.emojiUrl}" style="max-width: 120px; max-height: 120px; border-radius: 8px;">`;
+        } else if (msg.text) {
+            bubble.textContent = msg.text;
+        }
+        
+        messagesArea.appendChild(bubble);
+    });
+    
+    phoneAppDetailContent.appendChild(messagesArea);
+    
+    // 添加只读输入框
+    const inputArea = document.createElement('div');
+    inputArea.className = 'phone-chat-input-area';
+    inputArea.innerHTML = `
+        <input type="text" class="phone-chat-input" placeholder="此处不能输入..." disabled readonly>
+        <button class="phone-chat-send" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+        </button>
+    `;
+    phoneAppDetailContent.appendChild(inputArea);
+    
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+}
+
+// 加载短信APP的联系人列表
+function loadPhoneSmsContacts() {
+    phoneAppDetailContent.innerHTML = '';
+    phoneAppDetailContent.style.display = 'block';
+    phoneAppDetailContent.style.padding = '20px';
+    
+    // 获取用户设置
+    const userSettings = getUserSettings();
+    const userName = userSettings.name || '用户';
+    
+    // 获取联系人给用户起的备注（如果有）
+    const userNickname = getGeneratedPhoneData(currentViewingContact, 'userNickname') || userName;
+    
+    // 获取和用户的真实聊天记录
+    const realChatHistory = getChatHistory(currentViewingContact);
+    
+    // 获取AI生成的对话
+    const generatedConversations = getGeneratedPhoneData(currentViewingContact, 'conversations') || [];
+    
+    const allContacts = [];
+    
+    // 第一个联系人：用户（如果有聊天记录）
+    if (realChatHistory.length > 0) {
+        allContacts.push({ name: userNickname, isUser: true }); // 使用备注
+    }
+    
+    // 其他联系人（从AI生成的对话中提取）
+    generatedConversations.forEach(conv => {
+        allContacts.push({ name: conv.friend, isUser: false });
+    });
+    
+    if (allContacts.length === 0) {
+        phoneAppDetailContent.innerHTML = '<div class="app-content-empty" style="padding: 40px 20px;">暂无联系人<br><br>点击右上角刷新按钮让AI生成内容</div>';
+        return;
+    }
+    
+    // 获取用户头像
+    const userAvatar = userSettings.avatar || '';
+    
+    // 显示联系人列表
+    allContacts.forEach((contact, index) => {
+        const item = document.createElement('div');
+        item.className = 'phone-contact-item';
+        item.style.animationDelay = `${index * 0.05}s`;
+        item.style.animation = 'fadeIn 0.3s ease forwards';
+        
+        // 如果是用户，显示用户头像
+        let avatarHtml;
+        if (contact.isUser && userAvatar) {
+            avatarHtml = `<div class="phone-contact-avatar"><img src="${userAvatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`;
+        } else {
+            avatarHtml = `<div class="phone-contact-avatar">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>`;
+        }
+        
+        item.innerHTML = `
+            ${avatarHtml}
+            <div class="phone-contact-name">${contact.name}</div>
+        `;
+        
+        phoneAppDetailContent.appendChild(item);
+    });
+}
+
+function loadPhoneAppCall() {
+    phoneAppDetailContent.innerHTML = '';
+    
+    // 优先显示AI生成的通话记录
+    const callHistory = getGeneratedPhoneData(currentViewingContact, 'callHistory');
+    
+    if (callHistory && callHistory.length > 0) {
+        callHistory.forEach((call, index) => {
+            const item = document.createElement('div');
+            item.className = 'phone-call-item';
+            item.style.animationDelay = `${index * 0.05}s`;
+            item.style.animation = 'fadeIn 0.3s ease forwards';
+            
+            // 通话类型图标和颜色
+            let typeIcon, typeColor, typeText;
+            switch(call.type) {
+                case 'incoming':
+                    typeIcon = '📞';
+                    typeColor = 'var(--accent)';
+                    typeText = '来电';
+                    break;
+                case 'outgoing':
+                    typeIcon = '📱';
+                    typeColor = 'var(--text-primary)';
+                    typeText = '去电';
+                    break;
+                case 'missed':
+                    typeIcon = '📵';
+                    typeColor = '#ff4444';
+                    typeText = '未接';
+                    break;
+                default:
+                    typeIcon = '📞';
+                    typeColor = 'var(--text-secondary)';
+                    typeText = '';
+            }
+            
+            const durationText = call.duration ? `通话 ${call.duration}` : '未接听';
+            
+            item.innerHTML = `
+                <div class="phone-call-icon" style="color: ${typeColor}">${typeIcon}</div>
+                <div class="phone-call-info">
+                    <div class="phone-call-name" style="color: ${typeColor}">${call.name}</div>
+                    <div class="phone-call-detail">${typeText} · ${durationText}</div>
+                </div>
+                <div class="phone-call-time">${call.time}</div>
+            `;
+            
+            phoneAppDetailContent.appendChild(item);
+        });
+        return;
+    }
+    
+    // 如果没有AI生成内容
+    phoneAppDetailContent.innerHTML = '<div class="app-content-empty">暂无通话记录<br><br>点击右上角刷新按钮让AI生成内容</div>';
+}
+
+function loadPhoneAppNote() {
+    phoneAppDetailContent.innerHTML = '';
+    
+    // 优先显示AI生成的便签
+    const generatedNotes = getGeneratedPhoneData(currentViewingContact, 'notes');
+    
+    if (generatedNotes && generatedNotes.length > 0) {
+        generatedNotes.forEach((note, index) => {
+            const card = document.createElement('div');
+            card.className = 'app-content-card';
+            card.style.animationDelay = `${index * 0.05}s`;
+            
+            card.innerHTML = `
+                <div class="app-content-title">便签 ${index + 1}</div>
+                <div class="app-content-text">${escapeHtml(note)}</div>
+            `;
+            
+            phoneAppDetailContent.appendChild(card);
+        });
+        return;
+    }
+    
+    // 如果没有AI生成内容，显示人设
+    const saved = getContactData(currentViewingContact);
+    const persona = saved?.persona || '暂无个人便签';
+    
+    phoneAppDetailContent.innerHTML = `
+        <div class="app-content-card">
+            <div class="app-content-title">个人便签</div>
+            <div class="app-content-text">${escapeHtml(persona)}<br><br><span style="color: var(--text-secondary); font-size: 13px;">点击右上角刷新按钮让AI生成便签</span></div>
+        </div>
+    `;
+}
+
+function loadPhoneAppBrowser() {
+    phoneAppDetailContent.innerHTML = '';
+    
+    // 优先显示AI生成的浏览器历史
+    const browserHistory = getGeneratedPhoneData(currentViewingContact, 'browser');
+    
+    if (browserHistory && browserHistory.length > 0) {
+        browserHistory.forEach((item, index) => {
+            const historyItem = document.createElement('div');
+            historyItem.className = 'phone-browser-item';
+            historyItem.style.animationDelay = `${index * 0.05}s`;
+            historyItem.style.animation = 'fadeIn 0.3s ease forwards';
+            
+            historyItem.innerHTML = `
+                <div class="phone-browser-icon">🌐</div>
+                <div class="phone-browser-info">
+                    <div class="phone-browser-title">${escapeHtml(item.title)}</div>
+                    <div class="phone-browser-url">${escapeHtml(item.url)}</div>
+                </div>
+                <div class="phone-browser-time">${item.time}</div>
+            `;
+            
+            phoneAppDetailContent.appendChild(historyItem);
+        });
+        return;
+    }
+    
+    // 如果没有AI生成内容
+    phoneAppDetailContent.innerHTML = '<div class="app-content-empty">暂无浏览记录<br><br>点击右上角刷新按钮让AI生成内容</div>';
+}
+
+function loadPhoneAppDiary() {
+    phoneAppDetailContent.innerHTML = '';
+    
+    // 获取AI生成的日记
+    const generatedDiary = getGeneratedPhoneData(currentViewingContact, 'diary');
+    
+    if (generatedDiary && generatedDiary.length > 0) {
+        // 显示AI生成的日记
+        generatedDiary.forEach((entry, index) => {
+            const card = document.createElement('div');
+            card.className = 'app-content-card';
+            card.style.animationDelay = `${index * 0.05}s`;
+            
+            card.innerHTML = `
+                <div class="app-content-title">${entry.time}</div>
+                <div class="app-content-text">${escapeHtml(entry.content)}</div>
+            `;
+            
+            phoneAppDetailContent.appendChild(card);
+        });
+        return;
+    }
+    
+    // 如果没有生成内容，显示默认内容
+    // 获取聊天记录
+    const history = getChatHistory(currentViewingContact);
+    
+    // 获取空间动态
+    const posts = getPosts();
+    const contactPosts = posts.filter(p => p.author === currentViewingContact);
+    
+    if (history.length === 0 && contactPosts.length === 0) {
+        phoneAppDetailContent.innerHTML = '<div class="app-content-empty">暂无日记记录<br><br>点击右上角刷新按钮让AI生成内容</div>';
+        return;
+    }
+    
+    // 生成日记内容
+    const diaryEntries = [];
+    
+    // 从空间动态生成日记
+    contactPosts.forEach(post => {
+        diaryEntries.push({
+            time: post.time,
+            content: post.content,
+            type: 'post'
+        });
+    });
+    
+    // 从聊天记录生成日记（只取联系人发送的）
+    const receivedMessages = history.filter(msg => msg.type === 'received' && msg.text);
+    receivedMessages.slice(-10).forEach((msg, index) => {
+        diaryEntries.push({
+            time: msg.time || `对话记录 ${index + 1}`,
+            content: `今天和朋友聊天，我说："${msg.text}"`,
+            type: 'chat'
+        });
+    });
+    
+    if (diaryEntries.length === 0) {
+        phoneAppDetailContent.innerHTML = '<div class="app-content-empty">暂无日记记录<br><br>点击右上角刷新按钮让AI生成内容</div>';
+        return;
+    }
+    
+    // 显示日记
+    diaryEntries.forEach((entry, index) => {
+        const card = document.createElement('div');
+        card.className = 'app-content-card';
+        card.style.animationDelay = `${index * 0.05}s`;
+        
+        card.innerHTML = `
+            <div class="app-content-title">${entry.time}</div>
+            <div class="app-content-text">${escapeHtml(entry.content)}</div>
+        `;
+        
+        phoneAppDetailContent.appendChild(card);
+    });
+}
+
+// 获取/保存生成的手机内容
+function getGeneratedPhoneData(contactName, type) {
+    try {
+        const data = JSON.parse(localStorage.getItem('generatedPhoneData')) || {};
+        return data[contactName]?.[type] || null;
+    } catch {
+        return null;
+    }
+}
+
+function saveGeneratedPhoneData(contactName, type, content) {
+    try {
+        const data = JSON.parse(localStorage.getItem('generatedPhoneData')) || {};
+        if (!data[contactName]) {
+            data[contactName] = {};
+        }
+        data[contactName][type] = content;
+        localStorage.setItem('generatedPhoneData', JSON.stringify(data));
+    } catch (e) {
+        console.error('保存生成内容失败', e);
+    }
+}
+
+// AI生成手机内容
+async function generatePhoneContent() {
+    if (!currentViewingContact) return;
+    
+    const saved = getContactData(currentViewingContact);
+    const displayName = saved?.nickname || currentViewingContact;
+    
+    // 人设存储在customContacts中
+    const customContacts = getCustomContacts();
+    const contactInfo = customContacts.find(c => c.name === currentViewingContact);
+    const persona = contactInfo?.persona || '一个普通人';
+    
+    // 获取用户人设
+    const userSettings = getUserSettings();
+    const userName = userSettings.name || '用户';
+    const userPersona = userSettings.persona || '一个普通人';
+    
+    // 获取线上聊天记录作为剧情参考
+    const chatHistory = getChatHistory(currentViewingContact);
+    let onlineChats = '';
+    if (chatHistory.length > 0) {
+        const recent = chatHistory.slice(-10);
+        onlineChats = recent.map(msg => {
+            const sender = msg.type === 'sent' ? userName : displayName;
+            const text = msg.isEmoji ? '[表情]' : (msg.text || '');
+            return `${sender}: ${text}`;
+        }).join('\n');
+    }
+    
+    // 获取线下剧情作为参考
+    const offlineHistory = getOfflineHistory();
+    let offlineChats = '';
+    if (offlineHistory.length > 0) {
+        const recent = offlineHistory.slice(-10);
+        offlineChats = recent.map(msg => {
+            if (msg.type === 'narration') {
+                return `[旁白] ${msg.text}`;
+            } else if (msg.type === 'user') {
+                return `[用户行动] ${msg.text}`;
+            } else if (msg.type === 'ai') {
+                return `[${msg.roleName || 'AI'}] ${msg.text}`;
+            }
+            return msg.text;
+        }).join('\n');
+    }
+    
+    // 合并剧情
+    let allPlots = '';
+    if (onlineChats) {
+        allPlots += `【线上聊天记录】\n${onlineChats}\n\n`;
+    }
+    if (offlineChats) {
+        allPlots += `【线下剧情】\n${offlineChats}\n`;
+    }
+    
+    // 禁用按钮，显示加载状态
+    phoneRefreshBtn.disabled = true;
+    phoneRefreshBtn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;">
+            <line x1="12" y1="2" x2="12" y2="6"></line>
+            <line x1="12" y1="18" x2="12" y2="22"></line>
+            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+            <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+            <line x1="2" y1="12" x2="6" y2="12"></line>
+            <line x1="18" y1="12" x2="22" y2="12"></line>
+            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+            <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+        </svg>
+    `;
+    
+    // 获取现有的生成内容
+    const existingDiary = getGeneratedPhoneData(currentViewingContact, 'diary') || [];
+    const existingConversations = getGeneratedPhoneData(currentViewingContact, 'conversations') || [];
+    const existingNotes = getGeneratedPhoneData(currentViewingContact, 'notes') || [];
+    const existingCallHistory = getGeneratedPhoneData(currentViewingContact, 'callHistory') || [];
+    const existingBrowser = getGeneratedPhoneData(currentViewingContact, 'browser') || [];
+    const existingUserNickname = getGeneratedPhoneData(currentViewingContact, 'userNickname') || '';
+    
+    // 构建现有内容摘要
+    let existingSummary = '';
+    if (existingDiary.length > 0) {
+        existingSummary += `已有日记${existingDiary.length}篇；`;
+    }
+    if (existingConversations.length > 0) {
+        const friends = existingConversations.map(c => c.friend).join('、');
+        existingSummary += `已有和${friends}的对话；`;
+    }
+    if (existingNotes.length > 0) {
+        existingSummary += `已有便签${existingNotes.length}条；`;
+    }
+    if (existingCallHistory.length > 0) {
+        existingSummary += `已有通话记录${existingCallHistory.length}条；`;
+    }
+    if (existingBrowser.length > 0) {
+        existingSummary += `已有浏览记录${existingBrowser.length}条；`;
+    }
+    
+    try {
+        // 构建prompt - 生成新增内容
+        const prompt = `你现在完全扮演"${displayName}"这个人。
+
+【${displayName}的人设】
+${persona}
+
+【用户信息】
+用户名：${userName}
+用户人设：${userPersona}
+（注意：${displayName}和${userName}之间已有真实聊天记录，短信不需要生成和${userName}的对话）
+
+${allPlots ? `【当前剧情参考】
+${allPlots}` : ''}
+${existingSummary ? `【已有内容】
+${existingSummary}
+请生成新的内容，不要重复已有的。` : ''}
+
+请根据${displayName}的人设和身份，生成TA手机里的**新增**内容（以JSON格式返回）：
+
+1. userNickname: ${displayName}给${userName}起的备注/昵称（${existingUserNickname ? `当前是"${existingUserNickname}"，可以根据剧情更新` : '根据剧情发展和关系设定'}）
+2. diary: 1-2条**新的**个人日记，每条包含time（时间如"2024年1月15日 晴"）和content（内容）
+3. conversations: 1段**新的**和朋友的短信对话（朋友名字由你根据人设自由创造，不要是${userName}），包含friend（朋友名字）和messages（消息数组）
+4. notes: 1条**新的**便签内容
+5. callHistory: 1-2条**新的**通话记录，每条包含name、type（incoming/outgoing/missed）、time、duration
+6. browser: 1-2条**新的**浏览器历史记录，每条包含title、url、time
+
+【重要要求】
+- 所有内容必须完全符合${displayName}的人设和身份
+- 这是增量生成，只生成新内容，会追加到已有内容中
+- userNickname可以根据剧情发展更新
+- 内容要与当前剧情相关
+
+请严格按照以下JSON格式返回（不要添加任何markdown标记）：
+{
+  "userNickname": "${existingUserNickname || userName}",
+  "diary": [
+    {"time": "2024年1月16日 晴", "content": "新日记内容..."}
+  ],
+  "conversations": [
+    {
+      "friend": "朋友名字",
+      "messages": [
+        {"sender": "我", "text": "消息内容"},
+        {"sender": "朋友名字", "text": "回复内容"}
+      ]
+    }
+  ],
+  "notes": ["新便签内容"],
+  "callHistory": [
+    {"name": "联系人名", "type": "incoming", "time": "刚刚", "duration": "3分钟"}
+  ],
+  "browser": [
+    {"title": "新网页标题", "url": "https://example.com", "time": "刚刚"}
+  ]
+}`;
+
+        const response = await callAI(prompt, '');
+        
+        // 尝试解析JSON
+        let generatedData;
+        try {
+            // 提取JSON（可能被markdown包裹）
+            const jsonMatch = response.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+                generatedData = JSON.parse(jsonMatch[0]);
+            } else {
+                throw new Error('无法解析JSON');
+            }
+        } catch (parseError) {
+            console.error('JSON解析失败', parseError);
+            alert('AI生成的内容格式有误，请重试');
+            return;
+        }
+        
+        // 保存生成的内容（追加到现有内容）
+        // userNickname直接更新（不追加）
+        if (generatedData.userNickname) {
+            saveGeneratedPhoneData(currentViewingContact, 'userNickname', generatedData.userNickname);
+        }
+        
+        // 日记追加到开头（新的在前面）
+        if (generatedData.diary && generatedData.diary.length > 0) {
+            const newDiary = [...generatedData.diary, ...existingDiary];
+            saveGeneratedPhoneData(currentViewingContact, 'diary', newDiary);
+        }
+        
+        // 对话追加到开头
+        if (generatedData.conversations && generatedData.conversations.length > 0) {
+            const newConversations = [...generatedData.conversations, ...existingConversations];
+            saveGeneratedPhoneData(currentViewingContact, 'conversations', newConversations);
+        }
+        
+        // 便签追加到开头
+        if (generatedData.notes && generatedData.notes.length > 0) {
+            const newNotes = [...generatedData.notes, ...existingNotes];
+            saveGeneratedPhoneData(currentViewingContact, 'notes', newNotes);
+        }
+        
+        // 通话记录追加到开头（新的在前面）
+        if (generatedData.callHistory && generatedData.callHistory.length > 0) {
+            const newCallHistory = [...generatedData.callHistory, ...existingCallHistory];
+            saveGeneratedPhoneData(currentViewingContact, 'callHistory', newCallHistory);
+        }
+        
+        // 浏览器历史追加到开头（新的在前面）
+        if (generatedData.browser && generatedData.browser.length > 0) {
+            const newBrowser = [...generatedData.browser, ...existingBrowser];
+            saveGeneratedPhoneData(currentViewingContact, 'browser', newBrowser);
+        }
+        
+        alert('新内容已添加！进入各个APP查看');
+        
+    } catch (error) {
+        console.error('生成内容失败', error);
+        alert('生成失败：' + error.message);
+    } finally {
+        // 恢复按钮
+        phoneRefreshBtn.disabled = false;
+        phoneRefreshBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+        `;
+    }
+}
+
 // ESC键关闭抽屉或各界面
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -860,8 +2034,14 @@ document.addEventListener('keydown', (e) => {
             closePresetView();
         } else if (postEditView.classList.contains('active')) {
             closePostEdit();
+        } else if (phoneAppDetailView.classList.contains('active')) {
+            closePhoneAppDetail();
+        } else if (contactPhoneView.classList.contains('active')) {
+            closeContactPhoneView();
         } else if (spaceView.classList.contains('active')) {
             closeSpaceView();
+        } else if (phoneView.classList.contains('active')) {
+            closePhoneView();
         } else if (userView.classList.contains('active')) {
             closeUserView();
         } else if (bookView.classList.contains('active')) {
@@ -968,6 +2148,66 @@ function saveSummaryContent() {
     }
     
     closeSummaryModal();
+}
+
+// AI 生成总结
+async function generateAISummary() {
+    const config = JSON.parse(localStorage.getItem('apiConfig')) || {};
+    if (!config.url || !config.model) {
+        alert('请先在设置中配置 API');
+        return;
+    }
+    
+    // 获取聊天记录
+    let messages = '';
+    let historyLength = 0;
+    
+    if (currentSummaryType === 'offline') {
+        const history = getOfflineHistory();
+        historyLength = history.length;
+        if (history.length === 0) {
+            alert('暂无聊天记录可总结');
+            return;
+        }
+        messages = history.map(m => {
+            if (m.type === 'user') return `用户: ${m.text}`;
+            if (m.type === 'ai') return `${m.roleName || '角色'}: ${m.text}`;
+            if (m.type === 'narration') return `[旁白] ${m.text}`;
+            return m.text;
+        }).join('\n');
+    } else {
+        const history = getChatHistory(originalChatName);
+        historyLength = history.length;
+        if (history.length === 0) {
+            alert('暂无聊天记录可总结');
+            return;
+        }
+        messages = history.map(m => {
+            return m.type === 'sent' ? `用户: ${m.text}` : `对方: ${m.text}`;
+        }).join('\n');
+    }
+    
+    // 显示加载状态
+    summaryAIGenerate.disabled = true;
+    summaryAIGenerate.textContent = '生成中...';
+    
+    try {
+        const existingSummary = summaryContent.value.trim();
+        const newSummary = await generateSummary(messages, existingSummary);
+        summaryContent.value = newSummary;
+        
+        // 更新 lastIndex
+        if (currentSummaryType === 'offline') {
+            saveOfflineSummary(newSummary, historyLength);
+        } else {
+            saveSmsSummary(originalChatName, newSummary, historyLength);
+        }
+    } catch (e) {
+        alert('生成总结失败: ' + e.message);
+    } finally {
+        summaryAIGenerate.disabled = false;
+        summaryAIGenerate.textContent = 'AI总结';
+    }
 }
 
 async function confirmGenerateCharacter() {
@@ -1115,7 +2355,7 @@ function addGeneratedCharacter(character) {
 function addNarrationMessage(text, save = true) {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message narration-msg';
-    messageDiv.innerHTML = `<div class="message-content narration">${escapeHtml(text)}</div>`;
+    messageDiv.innerHTML = `<div class="message-content narration">${formatMessageText(text)}</div>`;
     messagesContainer.appendChild(messageDiv);
     messageDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
     
@@ -1129,67 +2369,92 @@ function addNarrationMessage(text, save = true) {
     addOfflineMessageMenu(messageDiv, text, 'narration');
 }
 
-// 解析 AI 响应，分发到线上/线下
+// 格式化文本（处理 *加粗* 等格式）
+function formatMessageText(text) {
+    let formatted = escapeHtml(text);
+    // *文字* 转为粗体
+    formatted = formatted.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
+    // _文字_ 转为斜体
+    formatted = formatted.replace(/_([^_]+)_/g, '<em>$1</em>');
+    return formatted;
+}
+
+// 解析 AI 响应，分发到线上/线下（按原文顺序）
 function parseAndDispatchAIResponse(response) {
-    let remaining = response;
-    let hasContent = false;
+    // 先解析 scene 标签更新场景
+    const sceneMatch = response.match(/<scene\s+location="([^"]+)"\s+date="([^"]+)"\s+time="([^"]+)"\s+weather="([^"]+)"[^>]*><\/scene>/i);
+    if (sceneMatch) {
+        updateSceneFromAI({
+            location: sceneMatch[1],
+            date: sceneMatch[2],
+            time: sceneMatch[3],
+            weather: sceneMatch[4]
+        });
+        // 移除 scene 标签
+        response = response.replace(sceneMatch[0], '').trim();
+    }
     
-    // 解析 <sms contact="xxx">内容</sms> - 发送短信
-    const smsMatches = [...response.matchAll(/<sms\s+contact="([^"]+)">([\s\S]*?)<\/sms>/gi)];
-    for (const match of smsMatches) {
-        const contactName = match[1];
-        const content = match[2].trim();
-        if (content) {
-            sendSmsFromAI(contactName, content);
-            hasContent = true;
+    const segments = [];
+    const tagPattern = /<(sms|offline|narration)(?:\s+contact="([^"]+)")?>([\s\S]*?)<\/\1>/gi;
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = tagPattern.exec(response)) !== null) {
+        if (match.index > lastIndex) {
+            const text = response.slice(lastIndex, match.index).trim();
+            if (text) segments.push({ type: 'narration', content: text });
         }
-        remaining = remaining.replace(match[0], '');
+        const tagType = match[1].toLowerCase();
+        const content = match[3].trim();
+        if (content) segments.push({ type: tagType, contact: match[2] || '', content });
+        lastIndex = match.index + match[0].length;
     }
     
-    // 解析 <offline contact="xxx">内容</offline> - 线下对话
-    const offlineMatches = [...response.matchAll(/<offline\s+contact="([^"]+)">([\s\S]*?)<\/offline>/gi)];
-    for (const match of offlineMatches) {
-        const contactName = match[1];
-        const content = match[2].trim();
-        if (content) {
-            addAIMessage(content, contactName);
-            hasContent = true;
-        }
-        remaining = remaining.replace(match[0], '');
+    if (lastIndex < response.length) {
+        const text = response.slice(lastIndex).trim();
+        if (text) segments.push({ type: 'narration', content: text });
     }
     
-    // 解析 <narration>内容</narration> - 旁白/场景描述
-    const narrationMatches = [...response.matchAll(/<narration>([\s\S]*?)<\/narration>/gi)];
-    for (const match of narrationMatches) {
-        const content = match[1].trim();
-        if (content) {
-            addNarrationMessage(content);
-            hasContent = true;
-        }
-        remaining = remaining.replace(match[0], '');
+    for (const seg of segments) {
+        if (seg.type === 'sms') sendSmsFromAI(seg.contact, seg.content);
+        else if (seg.type === 'offline') addAIMessage(seg.content, seg.contact);
+        else if (seg.type === 'narration') addNarrationMessage(seg.content);
     }
-    
-    // 剩余内容作为普通旁白（如果AI没有使用标签格式）
-    remaining = remaining.trim();
-    if (remaining) {
-        addNarrationMessage(remaining);
-    }
+}
+
+// 从 AI 响应更新场景
+function updateSceneFromAI(sceneData) {
+    const scene = {
+        name: sceneData.location,
+        date: sceneData.date,
+        time: sceneData.time,
+        weather: sceneData.weather
+    };
+    saveCurrentScene(scene);
 }
 
 // AI 发送短信给联系人
 function sendSmsFromAI(contactName, content) {
-    // 查找联系人
+    // 查找联系人（支持模糊匹配）
     const contacts = getCustomContacts();
     const contact = contacts.find(c => {
         const saved = getContactData(c.name);
         const displayName = saved?.nickname || c.name;
-        return c.name === contactName || displayName === contactName;
+        // 精确匹配或包含匹配
+        return c.name === contactName || 
+               displayName === contactName ||
+               c.name.includes(contactName) ||
+               displayName.includes(contactName) ||
+               contactName.includes(c.name) ||
+               contactName.includes(displayName);
     });
     
     if (!contact) {
-        console.warn('找不到联系人:', contactName);
+        console.warn('找不到联系人:', contactName, '可用联系人:', contacts.map(c => c.name));
         return;
     }
+    
+    console.log('发送短信:', contact.name, content);
     
     const saved = getContactData(contact.name);
     const displayName = saved?.nickname || contact.name;
@@ -1201,23 +2466,35 @@ function sendSmsFromAI(contactName, content) {
     
     const messagesToSend = sentences.length > 0 ? sentences : [content];
     
+    // 检查用户是否正在和该联系人聊天
+    const isInChat = chatDetail.classList.contains('active') && originalChatName === contact.name;
+    
     // 添加到聊天记录（每句话一条消息）
     const history = getChatHistory(contact.name);
     messagesToSend.forEach(msg => {
         history.push({ text: msg, type: 'received' });
-        // 每条消息增加一次未读计数
-        addUnreadCount(contact.name);
+        // 如果用户不在该聊天界面，增加未读计数
+        if (!isInChat) {
+            addUnreadCount(contact.name);
+        }
     });
     saveChatHistory(contact.name, history);
     
-    // 记录最后通知的联系人
-    lastNotificationContact = contact.name;
+    // 如果用户正在该聊天界面，直接添加消息气泡
+    if (isInChat) {
+        messagesToSend.forEach(msg => {
+            addChatBubble(msg, 'received', false);
+        });
+    } else {
+        // 不在聊天界面时显示通知
+        lastNotificationContact = contact.name;
+        console.log('显示通知:', displayName, messagesToSend[0]);
+        showSmsNotification(displayName, messagesToSend[0], saved?.avatar, saved?.color);
+    }
     
-    // 显示通知弹窗（显示第一条消息）
-    showSmsNotification(displayName, messagesToSend[0], saved?.avatar, saved?.color);
-    
-    // 刷新短信列表
+    // 刷新短信列表和徽章
     loadSmsMessages();
+    updateSmsBadge();
 }
 
 // 未读消息管理
@@ -1250,11 +2527,14 @@ function getTotalUnreadCount() {
 
 function updateSmsBadge() {
     const total = getTotalUnreadCount();
+    console.log('更新徽章, 未读总数:', total);
     if (total > 0) {
         smsBadge.textContent = total > 99 ? '99+' : total;
         smsBadge.classList.add('active');
+        smsBadge.style.display = 'flex'; // 强制显示
     } else {
         smsBadge.classList.remove('active');
+        smsBadge.style.display = 'none';
     }
 }
 
@@ -1313,12 +2593,36 @@ function getAllContactsInfo() {
     const contacts = getCustomContacts();
     if (contacts.length === 0) return '';
     
-    let info = '【可用联系人】\n';
+    let info = '【可用联系人及人设】\n';
     contacts.forEach(c => {
         const saved = getContactData(c.name);
         const displayName = saved?.nickname || c.name;
+        info += `\n【${displayName}】\n`;
+        if (c.persona) {
+            info += c.persona + '\n';
+        } else {
+            info += '（暂无详细人设）\n';
+        }
+    });
+    return info;
+}
+
+// 获取所有联系人的人设摘要（用于短信模式了解其他联系人）
+function getOtherContactsInfo(excludeName) {
+    const contacts = getCustomContacts();
+    const others = contacts.filter(c => c.name !== excludeName);
+    if (others.length === 0) return '';
+    
+    let info = '【其他联系人】\n';
+    others.forEach(c => {
+        const saved = getContactData(c.name);
+        const displayName = saved?.nickname || c.name;
         info += `- ${displayName}`;
-        if (c.persona) info += `：${c.persona}`;
+        if (c.persona) {
+            // 只取人设的前50个字符作为摘要
+            const brief = c.persona.length > 50 ? c.persona.substring(0, 50) + '...' : c.persona;
+            info += `：${brief}`;
+        }
         info += '\n';
     });
     return info;
@@ -1365,7 +2669,7 @@ function addAIMessage(text, roleName = '角色', save = true) {
             <span class="message-role ai">${escapeHtml(roleName)}</span>
             <span class="message-time">${getCurrentTime()}</span>
         </div>
-        <div class="message-content">${escapeHtml(text)}</div>
+        <div class="message-content">${formatMessageText(text)}</div>
     `;
     messagesContainer.appendChild(messageDiv);
     messageDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -1672,9 +2976,18 @@ async function generateSummary(messages, existingSummary = '') {
         headers['Authorization'] = `Bearer ${config.key}`;
     }
     
+    const summaryFormat = `【总结格式要求】
+必须包含以下要素（如有）：
+- 人物：涉及哪些人
+- 地点：发生在哪里
+- 事件：发生了什么事
+- 结果：事情的结果或当前状态
+
+要求：客观记录，不分析不评价，不超过200字。`;
+
     const prompt = existingSummary 
-        ? `以下是之前的对话总结：\n${existingSummary}\n\n以下是新的对话内容，请更新总结（保持简洁，不超过200字）：\n${messages}`
-        : `请将以下对话总结为简洁的摘要（不超过200字），保留关键信息和人物关系：\n${messages}`;
+        ? `${summaryFormat}\n\n以下是之前的总结：\n${existingSummary}\n\n以下是新的对话内容，请更新总结：\n${messages}`
+        : `${summaryFormat}\n\n请总结以下对话：\n${messages}`;
     
     try {
         const response = await fetch(apiUrl, {
@@ -1731,6 +3044,64 @@ async function checkAndSummarizeSms(contactName) {
     }
 }
 
+// 获取所有联系人的短信上下文（用于线下模式）
+function getAllSmsContext() {
+    const contacts = getCustomContacts();
+    const contextParts = [];
+    const pendingEvents = [];
+    
+    // 识别约定/意图的关键词
+    const meetingKeywords = ['来找你', '去找你', '过来', '过去', '见面', '等你', '到了', '出发', '马上到', '在路上', '约好', '一起'];
+    
+    contacts.forEach(contact => {
+        const saved = getContactData(contact.name);
+        const displayName = saved?.nickname || contact.name;
+        
+        const { summary } = getSmsSummary(contact.name);
+        const history = getChatHistory(contact.name);
+        
+        if (summary) {
+            contextParts.push(`【与${displayName}的短信总结】\n${summary}`);
+        }
+        
+        if (history.length > 0) {
+            const recent = history.slice(-8);
+            const recentText = recent.map(m => {
+                return m.type === 'sent' ? `用户: ${m.text}` : `${displayName}: ${m.text}`;
+            }).join('\n');
+            
+            if (!summary) {
+                contextParts.push(`【与${displayName}的最近短信】\n${recentText}`);
+            }
+            
+            // 检查最近消息中是否有约定见面的意图
+            const recentMessages = recent.slice(-3);
+            for (const msg of recentMessages) {
+                const text = msg.text;
+                for (const keyword of meetingKeywords) {
+                    if (text.includes(keyword)) {
+                        const who = msg.type === 'received' ? displayName : '用户';
+                        pendingEvents.push(`${displayName}在短信中提到"${text.slice(0, 30)}${text.length > 30 ? '...' : ''}"，可能即将出现`);
+                        break;
+                    }
+                }
+            }
+        }
+    });
+    
+    let result = contextParts.join('\n\n');
+    
+    // 添加待触发事件提示
+    if (pendingEvents.length > 0) {
+        result += '\n\n【线上线下联动提示 - 重要】\n';
+        result += '根据短信内容，以下联系人可能会在线下场景中出现：\n';
+        result += pendingEvents.map(e => `• ${e}`).join('\n');
+        result += '\n请根据场景合理安排这些联系人的出现，让线上短信的约定在线下得到呼应。';
+    }
+    
+    return result;
+}
+
 // 发送消息函数（线下自由模式）
 async function sendMessage() {
     const message = messageInput.value.trim();
@@ -1743,8 +3114,9 @@ async function sendMessage() {
         // 添加用户消息
         addUserMessage(message);
         
-        // 清空输入框
+        // 清空输入框并重置高度
         messageInput.value = '';
+        messageInput.style.height = 'auto';
         
         // 输入框重新获得焦点
         messageInput.focus();
@@ -2068,7 +3440,12 @@ function openChatDetail(name, lastMessage, avatarColor) {
     if (history.length > 0) {
         // 显示已保存的聊天记录
         history.forEach(msg => {
-            addChatBubble(msg.text, msg.type, false);
+            if (msg.isEmoji && msg.emojiUrl) {
+                // 表情消息
+                addEmojiBubble(msg.emojiUrl, msg.type);
+            } else {
+                addChatBubble(msg.text, msg.type, false);
+            }
         });
     }
     
@@ -2224,6 +3601,7 @@ async function sendChatMessage() {
     if (text) {
         addChatBubble(text, 'sent', true);
         chatDetailInput.value = '';
+        chatDetailInput.style.height = 'auto'; // 重置高度
         chatDetailInput.focus();
         
         // 获取联系人人设
@@ -2251,7 +3629,7 @@ async function sendChatMessage() {
     }
 }
 
-// 按句子分割发送消息
+// 按句子分割发送消息（支持表情）
 async function sendMessagesBySentence(text) {
     // 按句号、问号、感叹号、换行分割
     const sentences = text.split(/(?<=[。！？\n])/g)
@@ -2259,7 +3637,7 @@ async function sendMessagesBySentence(text) {
         .filter(s => s.length > 0);
     
     if (sentences.length === 0) {
-        addChatBubble(text, 'received', true);
+        await sendSingleMessage(text);
         return;
     }
     
@@ -2269,16 +3647,35 @@ async function sendMessagesBySentence(text) {
         // 显示输入动画（除了第一条）
         if (i > 0) {
             showChatTyping();
-            // 模拟打字延迟
             await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 500));
             hideChatTyping();
         }
         
-        addChatBubble(sentence, 'received', true);
+        await sendSingleMessage(sentence);
         
         // 每条消息之间稍微延迟
         if (i < sentences.length - 1) {
             await new Promise(resolve => setTimeout(resolve, 200));
+        }
+    }
+}
+
+// 发送单条消息（解析表情）
+async function sendSingleMessage(text) {
+    const parts = parseEmojiInMessage(text);
+    
+    for (const part of parts) {
+        if (part.type === 'emoji') {
+            // 发送表情（带长按菜单和保存）
+            addEmojiBubble(part.url, 'received', true, part.name);
+        } else if (part.content.trim()) {
+            // 发送文本
+            addChatBubble(part.content.trim(), 'received', true);
+        }
+        
+        // 每个部分之间稍微延迟
+        if (parts.length > 1) {
+            await new Promise(resolve => setTimeout(resolve, 150));
         }
     }
 }
@@ -2511,6 +3908,7 @@ function createNewContact() {
 function applyTheme(theme) {
     document.body.dataset.theme = theme;
     highlightActiveTheme();
+    applyThemeText(theme);
 }
 
 function highlightActiveTheme() {
@@ -2518,6 +3916,77 @@ function highlightActiveTheme() {
     themeCards.forEach((card) => {
         card.classList.toggle('active', card.dataset.theme === activeTheme);
     });
+}
+
+// 根据主题应用不同的文字风格
+function applyThemeText(theme) {
+    const isAncient = theme === 'ancient';
+    
+    // 古风文字映射
+    const ancientTexts = {
+        '短信': '飞鸽传书',
+        '设置': '典籍阁',
+        '联系人': '故交名录',
+        '添加联系人': '添新友',
+        '输入消息...': '落笔于此...',
+        '发送': '传书',
+        '保存': '存录',
+        '取消': '罢了',
+        '确定': '依允',
+        '删除': '删去',
+        '编辑': '修改',
+        '清除历史': '焚毁旧卷',
+        '查看总结': '览要',
+        'AI总结': '妙笔生花',
+        'AI生成角色': '凭空造人',
+        '温馨聊天界面': '墨韵雅集'
+    };
+    
+    // 默认文字映射
+    const defaultTexts = {
+        '飞鸽传书': '短信',
+        '典籍阁': '设置',
+        '故交名录': '联系人',
+        '添新友': '添加联系人',
+        '落笔于此...': '输入消息...',
+        '传书': '发送',
+        '存录': '保存',
+        '罢了': '取消',
+        '依允': '确定',
+        '删去': '删除',
+        '修改': '编辑',
+        '焚毁旧卷': '清除历史',
+        '览要': '查看总结',
+        '妙笔生花': 'AI总结',
+        '凭空造人': 'AI生成角色',
+        '墨韵雅集': '温馨聊天界面'
+    };
+    
+    const textMap = isAncient ? ancientTexts : defaultTexts;
+    
+    // 更新输入框占位符
+    const inputs = document.querySelectorAll('input[placeholder], textarea[placeholder]');
+    inputs.forEach(input => {
+        const placeholder = input.placeholder;
+        if (textMap[placeholder]) {
+            input.placeholder = textMap[placeholder];
+        }
+    });
+    
+    // 更新按钮和标题文字
+    const elements = document.querySelectorAll('button, h3, .app-name, .theme-name, title');
+    elements.forEach(el => {
+        const text = el.textContent.trim();
+        if (textMap[text]) {
+            el.textContent = textMap[text];
+        }
+    });
+    
+    // 更新页面标题
+    const title = document.querySelector('title');
+    if (title && textMap[title.textContent]) {
+        title.textContent = textMap[title.textContent];
+    }
 }
 
 function updateTemperatureValue(value) {
@@ -2899,13 +4368,24 @@ function buildAIMessagesSms(userMessage, contactPersona = '') {
         messages.push({ role: p.role, content: p.content });
     });
     
-    // 2. 添加短信模式提示
-    const smsPrompt = `【短信模式】
-这是线上短信聊天。请像真实的短信对话一样回复：
-- 每句话简短自然，像发短信一样
-- 可以用多句话表达，每句话会分开发送
+    // 2. 添加短信模式提示（强制预设）
+    const emojiInfo = getEmojiListInfo();
+    const smsPrompt = `【短信模式 - 强制规则】
+这是线上短信聊天。你必须严格遵守以下规则：
+
+【必须逐句发送】
+- 每条消息必须以句号、问号、感叹号或换行结尾
+- 一次回复包含多句话时，每句话会被系统自动分割成独立的短信气泡发送
+- 例如正确格式："你好啊。今天天气不错。要不要出来玩？"
+- 这样会被分成3条短信发送
+
+【短信风格要求】
+- 每句话简短自然，像真实发短信一样
 - 语气轻松随意，可以用表情符号
-- 不要写动作描述，只写对话内容`;
+- 禁止写动作描述（如*微笑*），只写纯对话内容
+- 禁止使用引号包裹对话
+
+${emojiInfo ? '【表情包功能】\n' + emojiInfo + '\n可以在合适的时候发送表情，表情会单独作为一条消息。' : ''}`;
     
     messages.push({ role: 'system', content: smsPrompt });
     
@@ -2931,14 +4411,33 @@ function buildAIMessagesSms(userMessage, contactPersona = '') {
         messages.push({ role: 'system', content: '[之前的对话总结]\n' + summary });
     }
     
+    // 5.6 添加线下场景总结（线上线下互通）
+    const { summary: offlineSummary } = getOfflineSummary();
+    if (offlineSummary) {
+        messages.push({ role: 'system', content: '[线下场景总结（你和用户在现实中的互动）]\n' + offlineSummary });
+    }
+    
+    // 5.7 添加其他联系人信息（了解用户的社交圈）
+    const otherContacts = getOtherContactsInfo(originalChatName);
+    if (otherContacts) {
+        messages.push({ role: 'system', content: otherContacts });
+    }
+    
     // 6. 添加聊天历史（最近10条）
     const history = getChatHistory(originalChatName);
     const recentHistory = history.slice(-10);
     recentHistory.forEach(msg => {
+        let content = msg.text;
+        // 如果是表情，转换为更友好的格式
+        if (msg.isEmoji) {
+            const emojiName = msg.text.match(/\[表情[：:]?\s*([^\]]+)\]/)?.[1] || '表情';
+            content = `（发送了表情：${emojiName}）`;
+        }
+        
         if (msg.type === 'sent') {
-            messages.push({ role: 'user', content: msg.text });
+            messages.push({ role: 'user', content: content });
         } else if (msg.type === 'received') {
-            messages.push({ role: 'assistant', content: msg.text });
+            messages.push({ role: 'assistant', content: content });
         }
     });
     
@@ -3017,31 +4516,57 @@ function buildAIMessagesOffline(userMessage) {
         messages.push({ role: p.role, content: p.content });
     });
     
-    // 2. 添加线下模式系统提示
-    const offlinePrompt = `【线下模式说明】
+    // 2. 添加线下模式系统提示（强制预设）
+    const sceneInfo = getSceneInfo();
+    const offlinePrompt = `【线下模式 - 强制规则】
 这是一个现实世界的自由探索场景。用户在现实中行动，联系人可能随时出现。
 
-${getAllContactsInfo()}
+${sceneInfo ? sceneInfo + '\n\n' : ''}${getAllContactsInfo()}
 
-【重要规则】
-- 绝对禁止代替用户行动、说话或做决定
-- 只能描写客观场景、环境和氛围
-- 只能扮演NPC和联系人角色的言行
-- 用户的行动由用户自己描述，不要替用户说话或行动
+【旁白规则 - narration标签】
+旁白使用第三人称（他/她）描写：
+✓ 环境描写：天气、场景、建筑、街道、时间等
+✓ 用第三人称描写联系人：如"她微微一笑"、"他转过身来"
+✓ 氛围描写：气氛、声音、气味等
+
+旁白禁止描写用户：
+✗ 禁止"你走向..."、"你感到..."等以"你"为主语的描写
+
+【联系人对话规则 - offline标签】
+直接写联系人的动作和对话，不需要加人称：
+✓ 动作用*星号*包裹
+✓ 说话内容用"双引号"包裹
+✓ 示例：*挥了挥手* "你好啊！"
+
+【线上线下联动 - 重要】
+短信（线上）和现实（线下）是同一个世界，需要保持联动：
+- 如果联系人在短信中说"来找你"、"马上到"等，应该在合适时机让该联系人出现在线下场景
+- 如果用户在短信中和某人约好了某事，线下场景应该呼应这个约定
+- 联系人可以在线下见面时提到之前短信聊的内容
+- 也可以用<sms>标签让联系人发短信，然后在后续场景中安排见面
+
+【场景更新规则 - scene标签】
+当场景发生变化时（地点、时间、天气改变），必须使用scene标签更新：
+<scene location="地点" date="日期" time="时间" weather="天气"></scene>
+- location: 当前所在地点（如：街道、咖啡厅、家中）
+- date: 当前日期（如：11月28日）
+- time: 当前时间（如：下午3点、傍晚、深夜）
+- weather: 当前天气（如：晴、阴、小雨、雪）
+
+每次回复开头如果场景有变化，先输出scene标签，再输出其他内容。
 
 【输出格式】
-请使用以下标签来区分不同类型的内容：
-- <narration>客观场景描述或旁白（不包含用户的行动）</narration>
-- <offline contact="联系人名">联系人在现场说的话或动作</offline>
-- <sms contact="联系人名">联系人发送的短信内容</sms>
+- <scene location="地点" date="日期" time="时间" weather="天气"></scene>（场景变化时必须输出）
+- <narration>第三人称旁白（环境+联系人描写）</narration>
+- <offline contact="联系人名">*动作* "对话"</offline>
+- <sms contact="联系人名">短信内容</sms>
 
-例如：
-<narration>阳光洒在街道上，行人来来往往。</narration>
-<sms contact="小红">我好像看到你了，你是不是在中央大街？</sms>
-<narration>一个熟悉的身影出现在不远处。</narration>
-<offline contact="小红">*小红挥着手跑过来* 真的是你！好巧啊！</offline>
+示例：
+<scene location="咖啡厅" date="11月28日" time="下午3点" weather="晴"></scene>
+<narration>阳光透过咖啡厅的落地窗洒进来，空气中弥漫着咖啡的香气。</narration>
 
-请根据用户的行动和场景，自然地安排联系人的出现和互动。`;
+错误示例：
+<narration>你走在街上</narration> ← 禁止描写用户`;
     
     messages.push({ role: 'system', content: offlinePrompt });
     
@@ -3060,6 +4585,12 @@ ${getAllContactsInfo()}
     const { summary } = getOfflineSummary();
     if (summary) {
         messages.push({ role: 'system', content: '[之前的场景总结]\n' + summary });
+    }
+    
+    // 4.6 添加各联系人的短信记录摘要（线上线下互通）
+    const smsContext = getAllSmsContext();
+    if (smsContext) {
+        messages.push({ role: 'system', content: '[短信聊天记录]\n' + smsContext });
     }
     
     // 5. 添加历史消息（最近10条）
@@ -3228,10 +4759,17 @@ function getUserData() {
     }
 }
 
+// 获取用户设置（别名函数）
+function getUserSettings() {
+    return getUserData();
+}
+
 function saveUserData() {
+    const currentData = getUserData();
     const data = {
         name: userName.value.trim() || '用户',
-        persona: userPersona.value.trim()
+        persona: userPersona.value.trim(),
+        avatar: currentData.avatar || '' // 保留现有头像
     };
     localStorage.setItem('userData', JSON.stringify(data));
     alert('用户设置已保存');
@@ -3241,6 +4779,67 @@ function loadUserData() {
     const data = getUserData();
     userName.value = data.name || '用户';
     userPersona.value = data.persona || '';
+    
+    // 加载用户头像
+    if (data.avatar) {
+        userAvatarEdit.innerHTML = `<img src="${data.avatar}">`;
+    }
+}
+
+// 用户头像函数
+function openUserAvatarModal() {
+    const data = getUserData();
+    tempUserAvatarUrl = data.avatar || '';
+    userAvatarUrlInput.value = tempUserAvatarUrl;
+    
+    if (tempUserAvatarUrl) {
+        updateUserAvatarPreview(tempUserAvatarUrl);
+    } else {
+        resetUserAvatarPreview();
+    }
+    
+    userAvatarModal.classList.add('active');
+}
+
+function closeUserAvatarModal() {
+    userAvatarModal.classList.remove('active');
+    userAvatarFileInput.value = '';
+}
+
+function updateUserAvatarPreview(url) {
+    tempUserAvatarUrl = url;
+    userAvatarPreview.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+}
+
+function resetUserAvatarPreview() {
+    tempUserAvatarUrl = '';
+    userAvatarPreview.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+    `;
+}
+
+function saveUserAvatarChange() {
+    const data = getUserData();
+    data.avatar = tempUserAvatarUrl;
+    localStorage.setItem('userData', JSON.stringify(data));
+    
+    // 更新设置界面的头像显示
+    if (tempUserAvatarUrl) {
+        userAvatarEdit.innerHTML = `<img src="${tempUserAvatarUrl}">`;
+    } else {
+        userAvatarEdit.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        `;
+    }
+    
+    closeUserAvatarModal();
+    alert('头像已保存');
 }
 
 // 书本界面函数
@@ -3514,12 +5113,29 @@ function deleteWorldBookFile(fileName) {
 // 世界书编辑
 let currentWBEditFile = '';
 let currentWBEditIndex = -1;
+let isNewWorldBookEntry = false;
+
+function addNewWorldBookEntry() {
+    isNewWorldBookEntry = true;
+    currentWBEditFile = '自定义条目';
+    currentWBEditIndex = -1;
+    
+    worldBookEditTitle.textContent = '新建条目';
+    worldBookEditComment.value = '';
+    worldBookEditKeys.value = '';
+    worldBookEditContent.value = '';
+    
+    worldBookEditView.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    saveViewState('worldBookEdit', { isNew: true });
+}
 
 function openWorldBookEdit(fileName, index) {
     const files = getWorldBookFiles();
     const entry = files[fileName]?.entries[index];
     if (!entry) return;
     
+    isNewWorldBookEntry = false;
     currentWBEditFile = fileName;
     currentWBEditIndex = index;
     
@@ -3541,13 +5157,37 @@ function closeWorldBookEdit() {
 
 function saveWorldBookEditChanges() {
     const files = getWorldBookFiles();
-    if (files[currentWBEditFile]?.entries[currentWBEditIndex]) {
-        files[currentWBEditFile].entries[currentWBEditIndex].comment = worldBookEditComment.value;
-        files[currentWBEditFile].entries[currentWBEditIndex].key = worldBookEditKeys.value.split(',').map(k => k.trim()).filter(k => k);
-        files[currentWBEditFile].entries[currentWBEditIndex].content = worldBookEditContent.value;
-        saveWorldBookFiles(files);
-        renderWorldBookList();
+    const comment = worldBookEditComment.value.trim();
+    const keys = worldBookEditKeys.value.split(',').map(k => k.trim()).filter(k => k);
+    const content = worldBookEditContent.value.trim();
+    
+    if (!comment && !keys.length && !content) {
+        alert('请至少填写一项内容');
+        return;
     }
+    
+    if (isNewWorldBookEntry) {
+        // 新建条目
+        if (!files[currentWBEditFile]) {
+            files[currentWBEditFile] = { entries: [] };
+        }
+        files[currentWBEditFile].entries.push({
+            comment: comment || '新条目',
+            key: keys,
+            content: content,
+            enabled: true
+        });
+    } else {
+        // 编辑已有条目
+        if (files[currentWBEditFile]?.entries[currentWBEditIndex]) {
+            files[currentWBEditFile].entries[currentWBEditIndex].comment = comment;
+            files[currentWBEditFile].entries[currentWBEditIndex].key = keys;
+            files[currentWBEditFile].entries[currentWBEditIndex].content = content;
+        }
+    }
+    
+    saveWorldBookFiles(files);
+    renderWorldBookList();
     closeWorldBookEdit();
 }
 
@@ -3557,7 +5197,7 @@ function renderWorldBookList() {
     
     const fileNames = Object.keys(files);
     if (fileNames.length === 0) {
-        worldBookContent.innerHTML = '<div class="book-empty">点击右上角导入世界书文件</div>';
+        worldBookContent.innerHTML = '<div class="book-empty">点击右上角 + 新建条目或导入世界书文件</div>';
         return;
     }
     
@@ -3726,12 +5366,29 @@ function toggleFileCollapsed(fileName) {
 // 预设编辑
 let currentEditFile = '';
 let currentEditIndex = -1;
+let isNewPresetEntry = false;
+
+function addNewPresetEntry() {
+    isNewPresetEntry = true;
+    currentEditFile = '自定义预设';
+    currentEditIndex = -1;
+    
+    presetEditTitle.textContent = '新建预设';
+    presetEditName.value = '';
+    presetEditRole.value = 'system';
+    presetEditContentText.value = '';
+    
+    presetEditView.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    saveViewState('presetEdit', { isNew: true });
+}
 
 function openPresetEdit(fileName, index) {
     const files = getPresetFiles();
     const preset = files[fileName]?.prompts[index];
     if (!preset) return;
     
+    isNewPresetEntry = false;
     currentEditFile = fileName;
     currentEditIndex = index;
     
@@ -3753,13 +5410,37 @@ function closePresetEdit() {
 
 function savePresetEditChanges() {
     const files = getPresetFiles();
-    if (files[currentEditFile]?.prompts[currentEditIndex]) {
-        files[currentEditFile].prompts[currentEditIndex].name = presetEditName.value;
-        files[currentEditFile].prompts[currentEditIndex].role = presetEditRole.value;
-        files[currentEditFile].prompts[currentEditIndex].content = presetEditContentText.value;
-        savePresetFiles(files);
-        renderPresetList();
+    const name = presetEditName.value.trim();
+    const role = presetEditRole.value;
+    const content = presetEditContentText.value.trim();
+    
+    if (!name && !content) {
+        alert('请至少填写名称或内容');
+        return;
     }
+    
+    if (isNewPresetEntry) {
+        // 新建预设
+        if (!files[currentEditFile]) {
+            files[currentEditFile] = { prompts: [], enabled: true };
+        }
+        files[currentEditFile].prompts.push({
+            name: name || '新预设',
+            role: role,
+            content: content,
+            enabled: true
+        });
+    } else {
+        // 编辑已有预设
+        if (files[currentEditFile]?.prompts[currentEditIndex]) {
+            files[currentEditFile].prompts[currentEditIndex].name = name;
+            files[currentEditFile].prompts[currentEditIndex].role = role;
+            files[currentEditFile].prompts[currentEditIndex].content = content;
+        }
+    }
+    
+    savePresetFiles(files);
+    renderPresetList();
     closePresetEdit();
 }
 
@@ -3769,7 +5450,7 @@ function renderPresetList() {
     
     const fileNames = Object.keys(files);
     if (fileNames.length === 0) {
-        presetContent.innerHTML = '<div class="book-empty">点击右上角导入预设文件</div>';
+        presetContent.innerHTML = '<div class="book-empty">点击右上角 + 新建预设或导入预设文件</div>';
         return;
     }
     
@@ -4002,6 +5683,31 @@ function restoreViewState() {
                     openPresetEdit(state.fileName, state.promptIndex);
                 }
                 break;
+            case 'space':
+                openSpaceView();
+                break;
+            case 'phone':
+                openPhoneView();
+                break;
+            case 'contactPhone':
+                openPhoneView();
+                if (state.contactName) {
+                    setTimeout(() => {
+                        openContactPhoneView(state.contactName);
+                    }, 100);
+                }
+                break;
+            case 'phoneAppDetail':
+                openPhoneView();
+                if (state.contactName && state.appType) {
+                    setTimeout(() => {
+                        openContactPhoneView(state.contactName);
+                        setTimeout(() => {
+                            openPhoneApp(state.appType);
+                        }, 150);
+                    }, 100);
+                }
+                break;
         }
     } catch (e) {
         console.error('恢复视图状态失败:', e);
@@ -4021,3 +5727,531 @@ window.addEventListener('load', () => {
     messageInput.focus();
 });
 
+// ========== 表情库功能 ==========
+
+// 获取表情列表
+function getEmojiList() {
+    try {
+        return JSON.parse(localStorage.getItem('customEmojis')) || [];
+    } catch {
+        return [];
+    }
+}
+
+// 保存表情列表
+function saveEmojiList(list) {
+    localStorage.setItem('customEmojis', JSON.stringify(list));
+}
+
+// 打开表情库管理
+emojiApp.addEventListener('click', () => {
+    openEmojiManager();
+});
+
+function openEmojiManager() {
+    renderEmojiManager();
+    emojiManagerView.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeEmojiManager() {
+    emojiManagerView.classList.remove('active');
+    restoreBodyScrollIfIdle();
+}
+
+emojiManagerBack.addEventListener('click', () => {
+    closeEmojiManager();
+});
+
+// 渲染表情库管理
+function renderEmojiManager() {
+    const emojis = getEmojiList();
+    emojiManagerContent.innerHTML = '';
+    
+    if (emojis.length === 0) {
+        emojiManagerContent.innerHTML = '<div class="book-empty" style="grid-column:1/-1;">点击右上角 + 添加表情包</div>';
+        return;
+    }
+    
+    emojis.forEach((emoji, index) => {
+        const item = document.createElement('div');
+        item.className = 'emoji-manager-item';
+        item.innerHTML = `
+            <img src="${emoji.url}" alt="${emoji.name}">
+            <div class="emoji-name">${emoji.name}</div>
+            <button class="emoji-delete" data-index="${index}">×</button>
+        `;
+        
+        item.querySelector('.emoji-delete').addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteEmoji(index);
+        });
+        
+        emojiManagerContent.appendChild(item);
+    });
+}
+
+// 删除表情
+function deleteEmoji(index) {
+    const emojis = getEmojiList();
+    emojis.splice(index, 1);
+    saveEmojiList(emojis);
+    renderEmojiManager();
+}
+
+// 添加表情弹窗
+addEmojiBtn.addEventListener('click', () => {
+    openEmojiAddModal();
+});
+
+function openEmojiAddModal() {
+    emojiNameInput.value = '';
+    emojiUrlInput.value = '';
+    emojiPreview.innerHTML = '';
+    emojiAddModal.classList.add('active');
+}
+
+function closeEmojiAddModal() {
+    emojiAddModal.classList.remove('active');
+}
+
+emojiAddModalClose.addEventListener('click', closeEmojiAddModal);
+emojiAddCancel.addEventListener('click', closeEmojiAddModal);
+
+emojiAddModal.addEventListener('click', (e) => {
+    if (e.target === emojiAddModal) {
+        closeEmojiAddModal();
+    }
+});
+
+// 预览表情
+emojiUrlInput.addEventListener('input', () => {
+    const url = emojiUrlInput.value.trim();
+    if (url) {
+        emojiPreview.innerHTML = `<img src="${url}" onerror="this.style.display='none'">`;
+    } else {
+        emojiPreview.innerHTML = '';
+    }
+});
+
+// 确认添加表情
+emojiAddConfirm.addEventListener('click', () => {
+    const name = emojiNameInput.value.trim();
+    const url = emojiUrlInput.value.trim();
+    
+    if (!name) {
+        alert('请输入表情名称');
+        return;
+    }
+    if (!url) {
+        alert('请输入图片URL');
+        return;
+    }
+    
+    const emojis = getEmojiList();
+    emojis.push({ name, url });
+    saveEmojiList(emojis);
+    
+    closeEmojiAddModal();
+    renderEmojiManager();
+});
+
+// 聊天界面表情面板
+chatEmojiBtn.addEventListener('click', () => {
+    toggleEmojiPanel();
+});
+
+function toggleEmojiPanel() {
+    if (emojiPanel.classList.contains('active')) {
+        closeEmojiPanel();
+    } else {
+        openEmojiPanel();
+    }
+}
+
+function openEmojiPanel() {
+    renderEmojiPanel();
+    emojiPanel.classList.add('active');
+}
+
+function closeEmojiPanel() {
+    emojiPanel.classList.remove('active');
+}
+
+emojiPanelClose.addEventListener('click', closeEmojiPanel);
+
+// 渲染表情选择面板
+function renderEmojiPanel() {
+    const emojis = getEmojiList();
+    emojiGrid.innerHTML = '';
+    
+    if (emojis.length === 0) {
+        emojiGrid.innerHTML = '<div class="emoji-empty">暂无表情，请在表情库APP中添加</div>';
+        return;
+    }
+    
+    emojis.forEach(emoji => {
+        const item = document.createElement('div');
+        item.className = 'emoji-item';
+        item.innerHTML = `<img src="${emoji.url}" alt="${emoji.name}" title="${emoji.name}">`;
+        item.addEventListener('click', () => {
+            sendEmojiMessage(emoji);
+            closeEmojiPanel();
+        });
+        emojiGrid.appendChild(item);
+    });
+}
+
+// 发送表情消息
+function sendEmojiMessage(emoji) {
+    addEmojiBubble(emoji.url, 'sent', true, emoji.name);
+}
+
+// 添加表情气泡（带长按菜单）
+function addEmojiBubble(url, type, save = false, emojiName = '') {
+    const bubble = document.createElement('div');
+    bubble.className = `chat-bubble ${type}`;
+    bubble.innerHTML = `<img class="emoji-image" src="${url}">`;
+    
+    // 获取当前索引
+    const history = getChatHistory(originalChatName);
+    const bubbleIndex = save ? history.length : chatDetailMessages.children.length;
+    bubble.dataset.index = bubbleIndex;
+    bubble.dataset.type = type;
+    bubble.dataset.isEmoji = 'true';
+    
+    // 长按事件
+    let pressTimer = null;
+    
+    const startPress = (e) => {
+        e.preventDefault();
+        pressTimer = setTimeout(() => {
+            showBubbleMenu(bubble, type, bubbleIndex);
+        }, 500);
+    };
+    
+    const endPress = () => {
+        if (pressTimer) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
+        }
+    };
+    
+    bubble.addEventListener('touchstart', startPress);
+    bubble.addEventListener('touchend', endPress);
+    bubble.addEventListener('touchmove', endPress);
+    bubble.addEventListener('mousedown', startPress);
+    bubble.addEventListener('mouseup', endPress);
+    bubble.addEventListener('mouseleave', endPress);
+    
+    chatDetailMessages.appendChild(bubble);
+    bubble.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    
+    // 保存到本地
+    if (save && emojiName) {
+        history.push({ text: `[表情:${emojiName}]`, type, isEmoji: true, emojiUrl: url });
+        saveChatHistory(originalChatName, history);
+    }
+}
+
+// 导入表情文件
+importEmojiBtn.addEventListener('click', () => {
+    emojiFileInput.click();
+});
+
+emojiFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        importEmojiFile(file);
+    }
+    emojiFileInput.value = '';
+});
+
+function importEmojiFile(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const content = e.target.result;
+        let imported = 0;
+        
+        try {
+            // 尝试解析 JSON
+            const data = JSON.parse(content);
+            if (Array.isArray(data)) {
+                const emojis = getEmojiList();
+                data.forEach(item => {
+                    if (item.name && item.url) {
+                        emojis.push({ name: item.name, url: item.url });
+                        imported++;
+                    }
+                });
+                saveEmojiList(emojis);
+            }
+        } catch {
+            // 不是 JSON，按文本解析
+            // 格式：每行 "名称 URL" 或 "名称|URL" 或 "名称,URL"
+            const lines = content.split('\n');
+            const emojis = getEmojiList();
+            
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+                
+                // 尝试多种分隔符
+                let parts = null;
+                
+                // 优先匹配 "名称：URL" 或 "名称: URL" 格式（中英文冒号）
+                const colonMatch = line.match(/^(.+?)[：:]\s*(https?:\/\/.+)$/i);
+                if (colonMatch) {
+                    parts = [colonMatch[1], colonMatch[2]];
+                } else if (line.includes('|')) {
+                    parts = line.split('|');
+                } else if (line.includes(',')) {
+                    parts = line.split(',');
+                } else if (line.includes('\t')) {
+                    parts = line.split('\t');
+                } else {
+                    // 用空格分隔，URL 通常是最后一部分
+                    const match = line.match(/^(.+?)\s+(https?:\/\/.+)$/i);
+                    if (match) {
+                        parts = [match[1], match[2]];
+                    }
+                }
+                
+                if (parts && parts.length >= 2) {
+                    const name = parts[0].trim();
+                    const url = parts[parts.length - 1].trim();
+                    if (name && url && url.match(/^https?:\/\//i)) {
+                        emojis.push({ name, url });
+                        imported++;
+                    }
+                }
+            });
+            
+            saveEmojiList(emojis);
+        }
+        
+        renderEmojiManager();
+        alert(`成功导入 ${imported} 个表情`);
+    };
+    reader.readAsText(file);
+}
+
+// 获取表情列表信息（用于 AI）
+function getEmojiListInfo() {
+    const emojis = getEmojiList();
+    if (emojis.length === 0) return '';
+    
+    let info = '【可用表情包】\n';
+    info += '你可以使用 [表情:名称] 格式发送表情，例如 [表情:开心]\n';
+    info += '可用表情：' + emojis.map(e => e.name).join('、');
+    return info;
+}
+
+// 根据名称查找表情
+function findEmojiByName(name) {
+    const emojis = getEmojiList();
+    return emojis.find(e => e.name === name || e.name.includes(name) || name.includes(e.name));
+}
+
+// 解析 AI 消息中的表情标签
+function parseEmojiInMessage(text) {
+    const emojiPattern = /\[表情[：:]\s*([^\]]+)\]/g;
+    let match;
+    const results = [];
+    let lastIndex = 0;
+    
+    while ((match = emojiPattern.exec(text)) !== null) {
+        // 添加表情前的文本
+        if (match.index > lastIndex) {
+            results.push({ type: 'text', content: text.slice(lastIndex, match.index) });
+        }
+        
+        // 查找表情
+        const emojiName = match[1].trim();
+        const emoji = findEmojiByName(emojiName);
+        if (emoji) {
+            results.push({ type: 'emoji', url: emoji.url, name: emojiName });
+        } else {
+            // 找不到表情，保留原文
+            results.push({ type: 'text', content: match[0] });
+        }
+        
+        lastIndex = match.index + match[0].length;
+    }
+    
+    // 添加剩余文本
+    if (lastIndex < text.length) {
+        results.push({ type: 'text', content: text.slice(lastIndex) });
+    }
+    
+    return results;
+}
+
+// ========== 场景功能 ==========
+
+// 获取当前场景
+function getCurrentScene() {
+    try {
+        return JSON.parse(localStorage.getItem('currentScene')) || null;
+    } catch {
+        return null;
+    }
+}
+
+// 保存当前场景
+function saveCurrentScene(scene) {
+    if (scene) {
+        localStorage.setItem('currentScene', JSON.stringify(scene));
+    } else {
+        localStorage.removeItem('currentScene');
+    }
+    updateSceneDisplay();
+}
+
+// 更新场景显示
+function updateSceneDisplay() {
+    const scene = getCurrentScene();
+    if (scene && scene.name) {
+        currentSceneName.textContent = scene.name;
+        
+        // 显示日期时间
+        if (scene.date || scene.time) {
+            const dateTimeStr = [scene.date, scene.time].filter(Boolean).join(' ');
+            sceneDateTime.textContent = dateTimeStr;
+            sceneDateTime.style.display = 'inline-flex';
+        } else {
+            sceneDateTime.style.display = 'none';
+        }
+        
+        // 显示天气
+        if (scene.weather) {
+            sceneWeather.textContent = scene.weather;
+            sceneWeather.style.display = 'inline-flex';
+        } else {
+            sceneWeather.style.display = 'none';
+        }
+    } else {
+        currentSceneName.textContent = '未知地点';
+        sceneDateTime.style.display = 'none';
+        sceneWeather.style.display = 'none';
+    }
+}
+
+// 打开场景设置弹窗
+offlineSceneInfo.addEventListener('click', () => {
+    openSceneModal();
+});
+
+function openSceneModal() {
+    const scene = getCurrentScene();
+    
+    // 重置预设按钮状态
+    document.querySelectorAll('.scene-preset-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (scene && btn.dataset.scene === scene.name) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // 填充自定义场景
+    customSceneInput.value = scene?.customName || '';
+    sceneDescription.value = scene?.description || '';
+    
+    sceneModal.classList.add('active');
+}
+
+function closeSceneModal() {
+    sceneModal.classList.remove('active');
+}
+
+sceneModalClose.addEventListener('click', closeSceneModal);
+
+sceneModal.addEventListener('click', (e) => {
+    if (e.target === sceneModal) {
+        closeSceneModal();
+    }
+});
+
+// 预设场景按钮点击
+document.querySelectorAll('.scene-preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.scene-preset-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        customSceneInput.value = '';
+    });
+});
+
+// 自定义场景输入时取消预设选中
+customSceneInput.addEventListener('input', () => {
+    document.querySelectorAll('.scene-preset-btn').forEach(b => b.classList.remove('active'));
+});
+
+// 保存场景
+sceneSave.addEventListener('click', () => {
+    const activePreset = document.querySelector('.scene-preset-btn.active');
+    const customName = customSceneInput.value.trim();
+    const description = sceneDescription.value.trim();
+    
+    let sceneName = '';
+    if (customName) {
+        sceneName = customName;
+    } else if (activePreset) {
+        sceneName = activePreset.dataset.scene;
+    }
+    
+    if (sceneName) {
+        saveCurrentScene({
+            name: sceneName,
+            customName: customName,
+            description: description
+        });
+    }
+    
+    closeSceneModal();
+});
+
+// 清除场景
+sceneClear.addEventListener('click', () => {
+    saveCurrentScene(null);
+    closeSceneModal();
+});
+
+// 获取场景信息（用于 AI）
+function getSceneInfo() {
+    const scene = getCurrentScene();
+    if (!scene || !scene.name) {
+        return '【当前场景】未设定，请在回复开头使用<scene>标签设定场景。';
+    }
+    
+    let info = `【当前场景】\n`;
+    info += `地点：${scene.name}\n`;
+    if (scene.date) info += `日期：${scene.date}\n`;
+    if (scene.time) info += `时间：${scene.time}\n`;
+    if (scene.weather) info += `天气：${scene.weather}\n`;
+    
+    // 添加场景规则
+    const privateScenes = ['家中', '卧室', '浴室', '私人空间'];
+    const semiPrivateScenes = ['公司', '学校', '朋友家'];
+    
+    if (privateScenes.some(s => scene.name.includes(s))) {
+        info += '这是私密空间，只有被邀请或住在一起的人才能出现。\n';
+    } else if (semiPrivateScenes.some(s => scene.name.includes(s))) {
+        info += '这是半私密场所，只有在这里有关系的人（如同事、同学）才可能出现。\n';
+    } else {
+        info += '这是公共场所，认识的人可能偶遇。\n';
+    }
+    
+    if (scene.description) {
+        info += `场景说明：${scene.description}\n`;
+    }
+    
+    info += '当场景变化时（地点、时间、天气改变），请用<scene>标签更新。';
+    
+    return info;
+}
+
+// 初始化场景显示
+updateSceneDisplay();
+
+// 初始化主题文字
+applyThemeText(document.body.dataset.theme || 'warm');
