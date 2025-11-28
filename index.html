@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>温馨聊天界面</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="warm">
+    <div class="container">
+        <!-- 线下场景头部 -->
+        <div class="offline-header" id="offlineHeader">
+            <div class="offline-info" id="offlineInfo"></div>
+            <div class="offline-actions">
+                <button class="offline-action-btn" id="viewOfflineSummaryBtn" title="查看总结">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                </button>
+                <button class="offline-action-btn" id="generateCharacterBtn" title="AI生成角色">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                        <line x1="12" y1="11" x2="12" y2="17"></line>
+                        <line x1="9" y1="14" x2="15" y2="14"></line>
+                    </svg>
+                </button>
+                <button class="offline-action-btn" id="clearOfflineHistory" title="清除历史">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="chat-area">
+            <!-- 聊天内容区域 -->
+            <div class="messages">
+            </div>
+        </div>
+        
+        <!-- 底部输入区域 -->
+        <div class="input-container">
+            <input 
+                type="text" 
+                class="input-field" 
+                placeholder="输入消息..."
+                id="messageInput"
+            />
+            <div class="button-group">
+                <button class="icon-button" id="sendButton" title="发送">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+                <button class="icon-button" id="moreButton" title="更多">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="19" cy="12" r="1"></circle>
+                        <circle cx="5" cy="12" r="1"></circle>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 消息通知弹窗 -->
+    <div class="sms-notification" id="smsNotification">
+        <div class="sms-notification-avatar" id="notificationAvatar"></div>
+        <div class="sms-notification-content">
+            <div class="sms-notification-name" id="notificationName"></div>
+            <div class="sms-notification-text" id="notificationText"></div>
+        </div>
+    </div>
+
+    <!-- 遮罩层 -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    
+    <!-- 抽屉式界面 -->
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <h3>更多功能</h3>
+            <button class="drawer-close" id="drawerClose">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="drawer-content">
+            <!-- App列表 -->
+            <div class="app-grid" id="appGrid">
+                <div class="app-item" id="smsApp">
+                    <div class="app-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            <line x1="9" y1="10" x2="15" y2="10"></line>
+                            <line x1="9" y1="14" x2="13" y2="14"></line>
+                        </svg>
+                        <span class="app-badge" id="smsBadge"></span>
+                    </div>
+                    <div class="app-label">短信</div>
+                </div>
+                <div class="app-item" id="settingsApp">
+                    <div class="app-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </div>
+                    <div class="app-label">设置</div>
+                </div>
+                <div class="app-item" id="gameApp">
+                    <div class="app-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                            <circle cx="8" cy="12" r="2"></circle>
+                            <line x1="15" y1="10" x2="15" y2="14"></line>
+                            <line x1="13" y1="12" x2="17" y2="12"></line>
+                        </svg>
+                    </div>
+                    <div class="app-label">小游戏</div>
+                </div>
+                <div class="app-item" id="bookApp">
+                    <div class="app-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="app-label">书本</div>
+                </div>
+                <div class="app-item" id="userApp">
+                    <div class="app-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <div class="app-label">用户</div>
+                </div>
+                <div class="app-item" id="spaceApp">
+                    <div class="app-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                        </svg>
+                    </div>
+                    <div class="app-label">空间</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 空间界面 -->
+    <div class="space-view" id="spaceView">
+        <div class="sms-header">
+            <button class="sms-back" id="spaceBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2>空间</h2>
+            <button class="header-more-btn" id="addPostBtn" title="发布动态">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="space-content" id="spaceContent">
+            <!-- 动态列表 -->
+        </div>
+    </div>
+
+    <!-- 发布动态界面 -->
+    <div class="post-edit-view" id="postEditView">
+        <div class="sms-header">
+            <button class="sms-back" id="postEditBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2>发布动态</h2>
+        </div>
+        <div class="post-edit-content">
+            <label class="form-field">
+                <span>发布者</span>
+                <select id="postAuthor">
+                    <option value="user">我自己</option>
+                </select>
+            </label>
+            <label class="form-field">
+                <span>动态内容</span>
+                <textarea id="postContent" rows="6" placeholder="分享你的想法..."></textarea>
+            </label>
+            <button class="primary-button" id="savePost">发布</button>
+        </div>
+    </div>
+
+    <!-- 用户设置界面 -->
+    <div class="user-view" id="userView">
+        <div class="sms-header">
+            <button class="sms-back" id="userBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2>用户设置</h2>
+        </div>
+        <div class="user-content">
+            <label class="form-field">
+                <span>用户名称</span>
+                <input type="text" id="userName" placeholder="输入用户名称">
+            </label>
+            <label class="form-field">
+                <span>用户人设</span>
+                <textarea id="userPersona" rows="12" placeholder="输入用户的人设描述，这会作为系统提示词发送给AI..."></textarea>
+            </label>
+            <button class="primary-button" id="saveUserSettings">保存设置</button>
+        </div>
+    </div>
+    
+    <!-- 短信消息界面 -->
+    <div class="sms-view" id="smsView">
+        <div class="sms-header">
+            <button class="sms-back" id="smsBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2 id="smsTitle">信息</h2>
+            <button class="header-more-btn" id="addContactBtn" style="display: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="sms-messages" id="smsMessages">
+            <!-- 消息列表将在这里动态生成 -->
+        </div>
+        <div class="sms-contacts" id="smsContacts" style="display: none;">
+            <!-- 联系人列表 -->
+        </div>
+        <div class="sms-tabbar">
+            <button class="sms-tab active" id="tabMessages">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>信息</span>
+            </button>
+            <button class="sms-tab" id="tabContacts">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span>联系人</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 聊天详情界面 -->
+    <div class="chat-detail-view" id="chatDetailView">
+        <div class="sms-header">
+            <button class="sms-back" id="chatDetailBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <div class="chat-detail-title">
+                <span class="chat-typing-status" id="chatTypingStatus">正在输入...</span>
+                <h2 id="chatDetailName">对话</h2>
+            </div>
+            <div class="chat-detail-actions">
+                <button class="header-more-btn" id="viewSmsSummaryBtn" title="查看总结">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                </button>
+                <button class="header-more-btn" id="chatDetailMore">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="19" cy="12" r="1"></circle>
+                        <circle cx="5" cy="12" r="1"></circle>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="chat-detail-messages" id="chatDetailMessages">
+            <!-- 聊天消息 -->
+        </div>
+        <div class="chat-detail-input">
+            <input type="text" id="chatDetailInput" placeholder="输入消息...">
+            <button class="icon-button" id="chatDetailSend">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- 添加联系人界面 -->
+    <div class="contact-add-view" id="contactAddView">
+        <div class="sms-header">
+            <button class="sms-back" id="contactAddBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2>新建联系人</h2>
+        </div>
+        <div class="contact-edit-content">
+            <div class="contact-edit-avatar" id="contactAddAvatar">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
+            <div class="contact-edit-colors" id="contactAddColors">
+                <div class="color-option" data-color="#ffb6c1" style="background: #ffb6c1;"></div>
+                <div class="color-option" data-color="#4fd1c5" style="background: #4fd1c5;"></div>
+                <div class="color-option" data-color="#ff0080" style="background: #ff0080;"></div>
+                <div class="color-option" data-color="#8b5a2b" style="background: #8b5a2b;"></div>
+                <div class="color-option" data-color="#6366f1" style="background: #6366f1;"></div>
+                <div class="color-option" data-color="#f59e0b" style="background: #f59e0b;"></div>
+            </div>
+            <label class="form-field">
+                <span>联系人名称</span>
+                <input type="text" id="contactAddName" placeholder="输入联系人名称">
+            </label>
+            <label class="form-field">
+                <span>人设/系统提示词</span>
+                <textarea id="contactAddPersona" rows="8" placeholder="输入角色人设或系统提示词..."></textarea>
+            </label>
+            <button class="primary-button contact-save-btn" id="saveContactAdd">创建联系人</button>
+        </div>
+    </div>
+
+    <!-- 联系人编辑界面 -->
+    <div class="contact-edit-view" id="contactEditView">
+        <div class="sms-header">
+            <button class="sms-back" id="contactEditBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2>编辑联系人</h2>
+        </div>
+        <div class="contact-edit-content">
+            <div class="contact-edit-avatar" id="contactEditAvatar">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <div class="avatar-edit-hint">点击更换头像</div>
+            </div>
+            <div class="contact-edit-colors">
+                <div class="color-option" data-color="#ffb6c1" style="background: #ffb6c1;"></div>
+                <div class="color-option" data-color="#4fd1c5" style="background: #4fd1c5;"></div>
+                <div class="color-option" data-color="#ff0080" style="background: #ff0080;"></div>
+                <div class="color-option" data-color="#8b5a2b" style="background: #8b5a2b;"></div>
+                <div class="color-option" data-color="#6366f1" style="background: #6366f1;"></div>
+                <div class="color-option" data-color="#f59e0b" style="background: #f59e0b;"></div>
+            </div>
+            <label class="form-field">
+                <span>备注名称</span>
+                <input type="text" id="contactNickname" placeholder="输入备注名称">
+            </label>
+            <label class="form-field contact-persona-field">
+                <span>角色人设</span>
+                <textarea id="contactPersonaEdit" rows="8" placeholder="输入角色人设或系统提示词..."></textarea>
+            </label>
+            <div class="contact-edit-actions">
+                <button class="primary-button contact-save-btn" id="saveContactEdit">保存修改</button>
+                <button class="danger-button" id="deleteContact">删除联系人</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI生成角色弹窗 -->
+    <div class="generate-modal" id="generateModal">
+        <div class="generate-modal-content">
+            <div class="generate-modal-header">
+                <h3>AI 生成角色</h3>
+                <button class="generate-modal-close" id="generateModalClose">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="generate-modal-body">
+                <label class="form-field">
+                    <span>描述你想要的角色</span>
+                    <textarea id="generateRequirement" rows="4" placeholder="例如：一个温柔的邻家女孩、一个神秘的侦探、一个热情的咖啡店老板..."></textarea>
+                </label>
+                <div class="generate-tips">
+                    <p>AI 会根据你的预设和世界书设定生成角色</p>
+                </div>
+            </div>
+            <div class="generate-modal-footer">
+                <button class="ghost-button" id="generateCancel">取消</button>
+                <button class="primary-button" id="generateConfirm">生成角色</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 总结查看/编辑弹窗 -->
+    <div class="summary-modal" id="summaryModal">
+        <div class="summary-modal-content">
+            <div class="summary-modal-header">
+                <h3 id="summaryModalTitle">对话总结</h3>
+                <button class="summary-modal-close" id="summaryModalClose">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="summary-modal-body">
+                <textarea id="summaryContent" rows="10" placeholder="暂无总结内容..."></textarea>
+            </div>
+            <div class="summary-modal-footer">
+                <button class="ghost-button" id="summaryCancel">取消</button>
+                <button class="primary-button" id="summarySave">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 头像选择弹窗 -->
+    <div class="avatar-modal" id="avatarModal">
+        <div class="avatar-modal-content">
+            <div class="avatar-modal-header">
+                <h3>更换头像</h3>
+                <button class="avatar-modal-close" id="avatarModalClose">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="avatar-modal-body">
+                <div class="avatar-preview" id="avatarPreview">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <label class="form-field">
+                    <span>图片 URL</span>
+                    <input type="text" id="avatarUrlInput" placeholder="输入图片链接">
+                </label>
+                <div class="avatar-or">或</div>
+                <label class="avatar-upload-btn">
+                    <input type="file" id="avatarFileInput" accept="image/*" style="display: none;">
+                    <span>从本地上传</span>
+                </label>
+            </div>
+            <div class="avatar-modal-footer">
+                <button class="ghost-button" id="avatarClearBtn">清除头像</button>
+                <button class="primary-button" id="avatarSaveBtn">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置界面 -->
+    <div class="settings-view" id="settingsView">
+        <div class="settings-header">
+            <button class="settings-back" id="settingsBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2>设置</h2>
+        </div>
+        <div class="settings-content">
+            <section class="theme-section">
+                <h3>主题风格</h3>
+                <p>选择你喜欢的配色风格，让聊天界面更贴合心情。</p>
+                <div class="theme-options">
+                    <button class="theme-card" data-theme="warm">
+                        <span class="theme-swatch theme-warm"></span>
+                        <div class="theme-info">
+                            <span class="theme-name">温馨</span>
+                            <span class="theme-desc">柔和粉色暖调</span>
+                        </div>
+                        <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </button>
+                    <button class="theme-card" data-theme="ocean">
+                        <span class="theme-swatch theme-ocean"></span>
+                        <div class="theme-info">
+                            <span class="theme-name">海盐</span>
+                            <span class="theme-desc">清爽蓝绿色调</span>
+                        </div>
+                        <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </button>
+                    <button class="theme-card" data-theme="cyber">
+                        <span class="theme-swatch theme-cyber"></span>
+                        <div class="theme-info">
+                            <span class="theme-name">赛博</span>
+                            <span class="theme-desc">霓虹朋克风格</span>
+                        </div>
+                        <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </button>
+                    <button class="theme-card" data-theme="vintage">
+                        <span class="theme-swatch theme-vintage"></span>
+                        <div class="theme-info">
+                            <span class="theme-name">复古</span>
+                            <span class="theme-desc">欧式典雅棕调</span>
+                        </div>
+                        <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+            <section class="api-section">
+                <div class="api-panel">
+                    <div class="section-headline">
+                        <div>
+                            <h3>连接 API</h3>
+                            <p>配置 URL、密钥和模型，快速联通大模型服务。</p>
+                        </div>
+                        <button class="ghost-button" id="pullModelsBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="17 1 21 5 17 9"></polyline>
+                                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                                <polyline points="7 23 3 19 7 15"></polyline>
+                                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                            </svg>
+                            <span>拉取模型</span>
+                        </button>
+                    </div>
+                    <div class="api-grid">
+                        <label class="form-field">
+                            <span>接口 URL</span>
+                            <input type="text" id="apiUrlInput" placeholder="https://api.example.com/v1/chat">
+                        </label>
+                        <label class="form-field">
+                            <span>API Key</span>
+                            <input type="password" id="apiKeyInput" placeholder="sk-xxxxxxxx">
+                        </label>
+                        <label class="form-field">
+                            <span>使用模型</span>
+                            <select id="apiModelSelect">
+                                <option value="">请先拉取或填写模型名称</option>
+                            </select>
+                        </label>
+                        <label class="form-field form-field-range">
+                            <div class="range-header">
+                                <span>模型温度</span>
+                                <span class="range-value" id="temperatureValue">0.7</span>
+                            </div>
+                            <input type="range" id="temperatureRange" min="0" max="1" step="0.1" value="0.7">
+                        </label>
+                    </div>
+                    <div class="api-status" id="apiStatus"></div>
+                    <div class="api-actions">
+                        <button class="ghost-button" id="testConnectionBtn">检测链接</button>
+                        <button class="primary-button" id="saveConfigBtn">保存配置</button>
+                    </div>
+                </div>
+            </section>
+            <section class="font-section">
+                <div class="api-panel font-panel">
+                    <div>
+                        <h3>字体设置</h3>
+                        <p>输入远程字体 URL，打造独一无二的界面字体风格。</p>
+                    </div>
+                    <label class="form-field">
+                        <span>字体文件 URL</span>
+                        <input type="text" id="fontUrlInput" placeholder="https://example.com/font.woff2">
+                    </label>
+                    <div class="font-actions">
+                        <button class="ghost-button" id="previewFontBtn">检测字体</button>
+                        <button class="primary-button" id="applyFontBtn">应用字体</button>
+                        <button class="ghost-button" id="resetFontBtn">恢复默认</button>
+                    </div>
+                    <div class="api-status font-status" id="fontStatus"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- 书本界面 -->
+    <div class="book-view" id="bookView">
+        <div class="sms-header">
+            <button class="sms-back" id="bookBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2>书本</h2>
+        </div>
+        <div class="book-content">
+            <div class="book-card" id="worldBookCard">
+                <div class="book-cover">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                </div>
+                <div class="book-info">
+                    <span class="book-title">世界书</span>
+                </div>
+            </div>
+            <div class="book-card" id="presetCard">
+                <div class="book-cover">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                </div>
+                <div class="book-info">
+                    <span class="book-title">预设</span>
+                </div>
+            </div>
+            <div class="book-card" id="regexCard">
+                <div class="book-cover">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                </div>
+                <div class="book-info">
+                    <span class="book-title">正则</span>
+                </div>
+            </div>
+        </div>
+        <input type="file" id="worldBookFileInput" accept=".json" style="display: none;">
+        <input type="file" id="regexFileInput" accept=".json" style="display: none;">
+        <input type="file" id="presetFileInput" accept=".json" style="display: none;">
+    </div>
+
+    <!-- 正则列表界面 -->
+    <div class="regex-view" id="regexView">
+        <div class="sms-header">
+            <button class="sms-back" id="regexBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2>正则</h2>
+            <button class="header-more-btn" id="importRegexBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="preset-content" id="regexContent">
+            <div class="book-empty">点击右上角导入正则文件</div>
+        </div>
+    </div>
+
+    <!-- 正则编辑界面 -->
+    <div class="preset-edit-view" id="regexEditView">
+        <div class="sms-header">
+            <button class="sms-back" id="regexEditBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2 id="regexEditTitle">编辑正则</h2>
+        </div>
+        <div class="preset-edit-content">
+            <label class="form-field">
+                <span>名称</span>
+                <input type="text" id="regexEditName" placeholder="正则名称">
+            </label>
+            <label class="form-field">
+                <span>查找正则</span>
+                <input type="text" id="regexEditFind" placeholder="正则表达式">
+            </label>
+            <label class="form-field">
+                <span>替换内容</span>
+                <textarea id="regexEditReplace" rows="5" placeholder="替换字符串..."></textarea>
+            </label>
+            <button class="primary-button" id="saveRegexEdit">保存修改</button>
+        </div>
+    </div>
+
+    <!-- 世界书列表界面 -->
+    <div class="worldbook-view" id="worldBookView">
+        <div class="sms-header">
+            <button class="sms-back" id="worldBookBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2>世界书</h2>
+            <button class="header-more-btn" id="importWorldBookBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="preset-content" id="worldBookContent">
+            <div class="book-empty">点击右上角导入世界书文件</div>
+        </div>
+    </div>
+
+    <!-- 世界书编辑界面 -->
+    <div class="preset-edit-view" id="worldBookEditView">
+        <div class="sms-header">
+            <button class="sms-back" id="worldBookEditBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2 id="worldBookEditTitle">编辑条目</h2>
+        </div>
+        <div class="preset-edit-content">
+            <label class="form-field">
+                <span>注释/名称</span>
+                <input type="text" id="worldBookEditComment" placeholder="条目名称">
+            </label>
+            <label class="form-field">
+                <span>关键词 (逗号分隔)</span>
+                <input type="text" id="worldBookEditKeys" placeholder="关键词1, 关键词2">
+            </label>
+            <label class="form-field">
+                <span>内容</span>
+                <textarea id="worldBookEditContent" rows="10" placeholder="条目内容..."></textarea>
+            </label>
+            <button class="primary-button" id="saveWorldBookEdit">保存修改</button>
+        </div>
+    </div>
+
+    <!-- 预设列表界面 -->
+    <div class="preset-view" id="presetView">
+        <div class="sms-header">
+            <button class="sms-back" id="presetBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2>预设</h2>
+            <button class="header-more-btn" id="importPresetBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="preset-content" id="presetContent">
+            <div class="book-empty">点击右上角导入预设文件</div>
+        </div>
+    </div>
+
+    <!-- 预设编辑界面 -->
+    <div class="preset-edit-view" id="presetEditView">
+        <div class="sms-header">
+            <button class="sms-back" id="presetEditBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2 id="presetEditTitle">编辑预设</h2>
+        </div>
+        <div class="preset-edit-content">
+            <label class="form-field">
+                <span>名称</span>
+                <input type="text" id="presetEditName" placeholder="预设名称">
+            </label>
+            <label class="form-field">
+                <span>角色</span>
+                <select id="presetEditRole">
+                    <option value="system">system</option>
+                    <option value="user">user</option>
+                    <option value="assistant">assistant</option>
+                </select>
+            </label>
+            <label class="form-field">
+                <span>内容</span>
+                <textarea id="presetEditContentText" rows="10" placeholder="预设内容..."></textarea>
+            </label>
+            <button class="primary-button" id="savePresetEdit">保存修改</button>
+        </div>
+    </div>
+
+    <!-- 小游戏界面 -->
+    <div class="game-view" id="gameView">
+        <div class="game-header">
+            <button class="game-back" id="gameBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2>小游戏</h2>
+        </div>
+        <div class="game-content">
+            <div class="game-card" id="guessNumberGame">
+                <div class="game-card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </div>
+                <div class="game-card-info">
+                    <span class="game-card-name">猜数字</span>
+                    <span class="game-card-desc">猜一个1-100的数字</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 猜数字游戏界面 -->
+    <div class="guess-view" id="guessView">
+        <div class="game-header">
+            <button class="game-back" id="guessBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2>猜数字</h2>
+            <button class="ghost-button" id="restartGame">重新开始</button>
+        </div>
+        <div class="guess-content">
+            <p class="guess-hint" id="guessHint">我想了一个1-100的数字，猜猜看！</p>
+            <div class="guess-input-row">
+                <input type="number" id="guessInput" class="guess-input" min="1" max="100" placeholder="输入数字">
+                <button class="primary-button" id="guessBtn">猜</button>
+            </div>
+            <p class="guess-attempts" id="guessAttempts"></p>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+
