@@ -116,7 +116,7 @@
                         </svg>
                         <span class="app-badge" id="smsBadge"></span>
                     </div>
-                    <div class="app-label">短信</div>
+                    <div class="app-label">微信</div>
                 </div>
                 <div class="app-item" id="settingsApp">
                     <div class="app-icon">
@@ -166,15 +166,6 @@
                         </svg>
                     </div>
                     <div class="app-label">用户</div>
-                </div>
-                <div class="app-item" id="spaceApp">
-                    <div class="app-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
-                        </svg>
-                    </div>
-                    <div class="app-label">空间</div>
                 </div>
                 <div class="app-item" id="phoneApp">
                     <div class="app-icon">
@@ -255,7 +246,7 @@
                                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                                 </svg>
                             </div>
-                            <span class="phone-app-label">短信</span>
+                            <span class="phone-app-label">微信</span>
                         </div>
                         
                         <div class="phone-app-item" id="phoneAppCall">
@@ -350,6 +341,13 @@
                 </svg>
                 <span>联系人</span>
             </button>
+            <button class="sms-tab" id="phoneTabMoments">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                </svg>
+                <span>朋友圈</span>
+            </button>
         </div>
     </div>
 
@@ -431,6 +429,10 @@
                 <textarea id="userPersona" rows="10" placeholder="输入用户的人设描述，这会作为系统提示词发送给AI..."></textarea>
             </label>
             <button class="primary-button" id="saveUserSettings">保存设置</button>
+            <div class="danger-zone">
+                <button class="danger-button" id="clearAllDataBtn">一键清除所有数据</button>
+                <span class="danger-hint">删除所有聊天记录、联系人、动态等（保留设置和书本）</span>
+            </div>
         </div>
         
         <!-- 用户头像编辑弹窗 -->
@@ -487,6 +489,9 @@
         <div class="sms-contacts" id="smsContacts" style="display: none;">
             <!-- 联系人列表 -->
         </div>
+        <div class="sms-moments" id="smsMoments" style="display: none;">
+            <!-- 朋友圈内容 -->
+        </div>
         <div class="sms-tabbar">
             <button class="sms-tab active" id="tabMessages">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -500,6 +505,13 @@
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
                 <span>联系人</span>
+            </button>
+            <button class="sms-tab" id="tabMoments">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                </svg>
+                <span>朋友圈</span>
             </button>
         </div>
     </div>
@@ -636,6 +648,10 @@
                 <span>备注名称</span>
                 <input type="text" id="contactNickname" placeholder="输入备注名称">
             </label>
+            <label class="form-field">
+                <span>真实姓名</span>
+                <input type="text" id="contactRealName" placeholder="输入联系人真实姓名">
+            </label>
             <label class="form-field contact-persona-field">
                 <span>角色人设</span>
                 <textarea id="contactPersonaEdit" rows="8" placeholder="输入角色人设或系统提示词..."></textarea>
@@ -688,10 +704,12 @@
                 </button>
             </div>
             <div class="summary-modal-body">
-                <textarea id="summaryContent" rows="10" placeholder="暂无总结内容..."></textarea>
+                <div class="summary-cards" id="summaryCards"></div>
+                <textarea id="summaryContent" rows="8" placeholder="暂无总结内容..." style="display:none;"></textarea>
             </div>
             <div class="summary-modal-footer">
                 <button class="ghost-button" id="summaryCancel">取消</button>
+                <button class="secondary-button" id="summaryEdit">编辑</button>
                 <button class="secondary-button" id="summaryAIGenerate">AI总结</button>
                 <button class="primary-button" id="summarySave">保存</button>
             </div>
@@ -1146,19 +1164,7 @@
             <h2>小游戏</h2>
         </div>
         <div class="game-content">
-            <div class="game-card" id="guessNumberGame">
-                <div class="game-card-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
-                </div>
-                <div class="game-card-info">
-                    <span class="game-card-name">猜数字</span>
-                    <span class="game-card-desc">猜一个1-100的数字</span>
-                </div>
-            </div>
+            <div class="game-empty">暂无可用游戏</div>
         </div>
     </div>
 
@@ -1227,28 +1233,6 @@
         </div>
     </div>
 
-    <!-- 猜数字游戏界面 -->
-    <div class="guess-view" id="guessView">
-        <div class="game-header">
-            <button class="game-back" id="guessBack">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-            </button>
-            <h2>猜数字</h2>
-            <button class="ghost-button" id="restartGame">重新开始</button>
-        </div>
-        <div class="guess-content">
-            <p class="guess-hint" id="guessHint">我想了一个1-100的数字，猜猜看！</p>
-            <div class="guess-input-row">
-                <input type="number" id="guessInput" class="guess-input" min="1" max="100" placeholder="输入数字">
-                <button class="primary-button" id="guessBtn">猜</button>
-            </div>
-            <p class="guess-attempts" id="guessAttempts"></p>
-        </div>
-    </div>
-    
     <script src="script.js"></script>
 </body>
 </html>
