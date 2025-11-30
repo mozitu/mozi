@@ -27,10 +27,6 @@ const summaryAIGenerate = document.getElementById('summaryAIGenerate');
 const drawer = document.getElementById('drawer');
 const drawerOverlay = document.getElementById('drawerOverlay');
 const appGrid = document.getElementById('appGrid');
-const smsNotification = document.getElementById('smsNotification');
-const notificationAvatar = document.getElementById('notificationAvatar');
-const notificationName = document.getElementById('notificationName');
-const notificationText = document.getElementById('notificationText');
 const smsBadge = document.getElementById('smsBadge');
 const drawerClose = document.getElementById('drawerClose');
 const smsApp = document.getElementById('smsApp');
@@ -56,17 +52,17 @@ const phoneAppCall = document.getElementById('phoneAppCall');
 const phoneAppNote = document.getElementById('phoneAppNote');
 const phoneAppBrowser = document.getElementById('phoneAppBrowser');
 const phoneAppDiary = document.getElementById('phoneAppDiary');
+const phoneAppPeek = document.getElementById('phoneAppPeek');
 const phoneRefreshBtn = document.getElementById('phoneRefreshBtn');
+const phonePostBtn = document.getElementById('phonePostBtn');
 const phoneAppDetailView = document.getElementById('phoneAppDetailView');
 const phoneAppDetailBack = document.getElementById('phoneAppDetailBack');
 const phoneAppDetailTitle = document.getElementById('phoneAppDetailTitle');
 const phoneAppDetailContent = document.getElementById('phoneAppDetailContent');
-const phoneSmsTabbar = document.getElementById('phoneSmsTabbar');
-const phoneTabMessages = document.getElementById('phoneTabMessages');
-const phoneTabContacts = document.getElementById('phoneTabContacts');
-const phoneTabMoments = document.getElementById('phoneTabMoments');
+const phoneAppRefreshBtn = document.getElementById('phoneAppRefreshBtn');
 const phoneUserCard = document.getElementById('phoneUserCard');
 const addPostBtn = document.getElementById('addPostBtn');
+const spaceRefreshBtn = document.getElementById('spaceRefreshBtn');
 const postEditView = document.getElementById('postEditView');
 const postEditBack = document.getElementById('postEditBack');
 const postAuthor = document.getElementById('postAuthor');
@@ -95,6 +91,9 @@ const previewFontBtn = document.getElementById('previewFontBtn');
 const applyFontBtn = document.getElementById('applyFontBtn');
 const resetFontBtn = document.getElementById('resetFontBtn');
 const fontStatus = document.getElementById('fontStatus');
+const globalCssInput = document.getElementById('globalCssInput');
+const bubbleCssInput = document.getElementById('bubbleCssInput');
+const cssPreviewBubbles = document.getElementById('cssPreviewBubbles');
 const gameApp = document.getElementById('gameApp');
 const gameView = document.getElementById('gameView');
 const gameBack = document.getElementById('gameBack');
@@ -109,6 +108,7 @@ const chatDetailName = document.getElementById('chatDetailName');
 const chatDetailMessages = document.getElementById('chatDetailMessages');
 const chatDetailInput = document.getElementById('chatDetailInput');
 const chatDetailSend = document.getElementById('chatDetailSend');
+const chatCallBtn = document.getElementById('chatCallBtn');
 const chatTypingStatus = document.getElementById('chatTypingStatus');
 const chatDetailMore = document.getElementById('chatDetailMore');
 const contactEditView = document.getElementById('contactEditView');
@@ -216,6 +216,7 @@ const customSceneInput = document.getElementById('customSceneInput');
 const sceneDescription = document.getElementById('sceneDescription');
 const sceneClear = document.getElementById('sceneClear');
 const sceneSave = document.getElementById('sceneSave');
+const wechatNotificationContainer = document.getElementById('wechatNotificationContainer');
 
 const defaultFontStack = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif";
 
@@ -349,6 +350,11 @@ chatDetailSend.addEventListener('click', () => {
     sendChatMessage();
 });
 
+// 通话按钮
+chatCallBtn.addEventListener('click', () => {
+    startChatCall();
+});
+
 chatDetailInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -363,8 +369,8 @@ chatDetailInput.addEventListener('input', () => {
 
 function autoResizeTextarea(textarea) {
     // 先重置高度以获取正确的 scrollHeight
-    textarea.style.height = '44px';
-    const newHeight = Math.max(44, Math.min(textarea.scrollHeight, 150));
+    textarea.style.height = '36px';
+    const newHeight = Math.max(36, Math.min(textarea.scrollHeight, 150));
     textarea.style.height = newHeight + 'px';
     
     // 如果内容超过最大高度，显示滚动条
@@ -552,6 +558,36 @@ applyFontBtn.addEventListener('click', () => {
     loadCustomFont(true);
 });
 
+// CSS编辑器事件
+document.getElementById('saveGlobalCssBtn')?.addEventListener('click', () => {
+    saveCustomCss('global', globalCssInput.value);
+});
+
+document.getElementById('resetGlobalCssBtn')?.addEventListener('click', () => {
+    globalCssInput.value = '';
+    saveCustomCss('global', '');
+});
+
+document.getElementById('saveBubbleCssBtn')?.addEventListener('click', () => {
+    saveCustomCss('bubble', bubbleCssInput.value);
+});
+
+document.getElementById('resetBubbleCssBtn')?.addEventListener('click', () => {
+    bubbleCssInput.value = '';
+    saveCustomCss('bubble', '');
+    updateBubblePreview('');
+});
+
+// 气泡CSS实时预览
+bubbleCssInput?.addEventListener('input', () => {
+    updateBubblePreview(bubbleCssInput.value);
+});
+
+// 全局CSS实时预览
+globalCssInput?.addEventListener('input', () => {
+    applyCustomCss('global-preview', globalCssInput.value);
+});
+
 resetFontBtn.addEventListener('click', () => {
     resetCustomFont();
 });
@@ -591,6 +627,44 @@ phoneAppDetailBack.addEventListener('click', () => {
     closePhoneAppDetail();
 });
 
+// APP内刷新按钮
+phoneAppRefreshBtn.addEventListener('click', () => {
+    refreshCurrentPhoneApp();
+});
+
+// 刷新当前APP内容
+async function refreshCurrentPhoneApp() {
+    if (!currentPhoneApp || !currentViewingContact) return;
+    
+    // 删除已有的生成内容，重新生成
+    switch(currentPhoneApp) {
+        case 'call':
+            deletePhoneDataItem(currentViewingContact, 'call', -1); // -1表示删除全部
+            loadPhoneAppCall();
+            break;
+        case 'note':
+            deletePhoneDataItem(currentViewingContact, 'note', -1);
+            loadPhoneAppNote();
+            break;
+        case 'browser':
+            deletePhoneDataItem(currentViewingContact, 'browser', -1);
+            loadPhoneAppBrowser();
+            break;
+        case 'diary':
+            deletePhoneDataItem(currentViewingContact, 'diary', -1);
+            loadPhoneAppDiary();
+            break;
+        case 'peek':
+            deletePhoneDataItem(currentViewingContact, 'peek', -1);
+            loadPhoneAppPeek();
+            break;
+        case 'sms':
+            // 刷新消息列表
+            loadPhoneSmsMessages();
+            break;
+    }
+}
+
 // 手机APP点击事件
 phoneAppSms.addEventListener('click', () => {
     openPhoneApp('sms');
@@ -612,20 +686,16 @@ phoneAppDiary.addEventListener('click', () => {
     openPhoneApp('diary');
 });
 
+phoneAppPeek.addEventListener('click', () => {
+    openPhoneApp('peek');
+});
+
 phoneRefreshBtn.addEventListener('click', () => {
     generatePhoneContent();
 });
 
-phoneTabMessages.addEventListener('click', () => {
-    switchPhoneSmsTab('messages');
-});
-
-phoneTabContacts.addEventListener('click', () => {
-    switchPhoneSmsTab('contacts');
-});
-
-phoneTabMoments.addEventListener('click', () => {
-    switchPhoneSmsTab('moments');
+phonePostBtn.addEventListener('click', () => {
+    triggerContactPost();
 });
 
 phoneUserCard.addEventListener('click', () => {
@@ -634,6 +704,10 @@ phoneUserCard.addEventListener('click', () => {
 
 addPostBtn.addEventListener('click', () => {
     openPostEdit();
+});
+
+spaceRefreshBtn.addEventListener('click', () => {
+    triggerRandomContactPost();
 });
 
 postEditBack.addEventListener('click', () => {
@@ -990,6 +1064,24 @@ function loadPosts() {
             }
         }
         
+        const imageHtml = post.image ? `<div class="post-image" data-desc="${escapeHtml(post.imageDesc || '图片')}"><img src="${post.image}" alt="朋友圈图片"></div>` : '';
+        
+        // 点赞列表
+        const likes = post.likes || [];
+        const userData = getUserData();
+        const userLiked = likes.includes('user');
+        const likesHtml = likes.length > 0 ? `<div class="post-likes">❤️ ${likes.map(l => l === 'user' ? (userData.name || '我') : l).join('、')}</div>` : '';
+        
+        // 评论列表
+        const comments = post.comments || [];
+        const commentsHtml = comments.map(c => {
+            const commenterName = c.author === 'user' ? (userData.name || '我') : c.author;
+            if (c.replyTo) {
+                return `<div class="post-comment"><span class="comment-author">${commenterName}</span> 回复 <span class="comment-author">${c.replyTo}</span>：${escapeHtml(c.text)}</div>`;
+            }
+            return `<div class="post-comment"><span class="comment-author">${commenterName}</span>：${escapeHtml(c.text)}</div>`;
+        }).join('');
+        
         card.innerHTML = `
             <div class="post-header">
                 ${avatarHtml}
@@ -1005,6 +1097,25 @@ function loadPosts() {
                 </button>
             </div>
             <div class="post-content">${escapeHtml(post.content)}</div>
+            ${imageHtml}
+            <div class="post-actions">
+                <button class="post-action-btn post-like-btn ${userLiked ? 'liked' : ''}" data-post-id="${post.id}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${userLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    点赞
+                </button>
+                <button class="post-action-btn post-comment-btn" data-post-id="${post.id}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    评论
+                </button>
+            </div>
+            <div class="post-interactions">
+                ${likesHtml}
+                <div class="post-comments">${commentsHtml}</div>
+            </div>
         `;
         
         card.querySelector('.post-delete').addEventListener('click', () => {
@@ -1012,6 +1123,24 @@ function loadPosts() {
                 deletePost(post.id);
             }
         });
+        
+        // 点赞按钮
+        card.querySelector('.post-like-btn').addEventListener('click', () => {
+            togglePostLike(post.id);
+        });
+        
+        // 评论按钮
+        card.querySelector('.post-comment-btn').addEventListener('click', () => {
+            showCommentInput(post.id, post.author);
+        });
+        
+        // 图片点击显示描述
+        const postImage = card.querySelector('.post-image');
+        if (postImage) {
+            postImage.addEventListener('click', () => {
+                showImageDescription(post.imageDesc || '图片');
+            });
+        }
         
         spaceContent.appendChild(card);
     });
@@ -1022,6 +1151,417 @@ function deletePost(postId) {
     posts = posts.filter(p => p.id !== postId);
     savePosts(posts);
     loadPosts();
+}
+
+// 点赞切换
+function togglePostLike(postId) {
+    let posts = getPosts();
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+    
+    if (!post.likes) post.likes = [];
+    
+    const userIndex = post.likes.indexOf('user');
+    if (userIndex > -1) {
+        post.likes.splice(userIndex, 1);
+    } else {
+        post.likes.push('user');
+    }
+    
+    savePosts(posts);
+    loadPosts();
+}
+
+// 显示评论输入框
+function showCommentInput(postId, postAuthor, refreshCallback = null) {
+    const modal = document.createElement('div');
+    modal.className = 'comment-input-modal';
+    modal.innerHTML = `
+        <div class="comment-input-content">
+            <div class="comment-input-title">发表评论</div>
+            <textarea class="comment-textarea" placeholder="写下你的评论..." rows="3"></textarea>
+            <div class="comment-input-actions">
+                <button class="comment-cancel-btn">取消</button>
+                <button class="comment-submit-btn">发送</button>
+            </div>
+        </div>
+    `;
+    
+    const textarea = modal.querySelector('.comment-textarea');
+    const cancelBtn = modal.querySelector('.comment-cancel-btn');
+    const submitBtn = modal.querySelector('.comment-submit-btn');
+    
+    cancelBtn.addEventListener('click', () => {
+        modal.classList.add('fade-out');
+        setTimeout(() => modal.remove(), 200);
+    });
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.add('fade-out');
+            setTimeout(() => modal.remove(), 200);
+        }
+    });
+    
+    submitBtn.addEventListener('click', async () => {
+        const text = textarea.value.trim();
+        if (!text) return;
+        
+        // 添加用户评论
+        addPostComment(postId, 'user', text);
+        if (refreshCallback) refreshCallback();
+        
+        modal.classList.add('fade-out');
+        setTimeout(() => modal.remove(), 200);
+        
+        // AI回复评论
+        await generateCommentReply(postId, postAuthor, text, refreshCallback);
+    });
+    
+    document.body.appendChild(modal);
+    setTimeout(() => {
+        modal.classList.add('active');
+        textarea.focus();
+    }, 10);
+}
+
+// 添加评论
+function addPostComment(postId, author, text, replyTo = null) {
+    let posts = getPosts();
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+    
+    if (!post.comments) post.comments = [];
+    
+    post.comments.push({
+        author,
+        text,
+        replyTo,
+        time: new Date().toLocaleString('zh-CN')
+    });
+    
+    savePosts(posts);
+    loadPosts();
+}
+
+// AI生成评论回复
+async function generateCommentReply(postId, postAuthor, userComment, refreshCallback = null) {
+    // 如果是用户自己的帖子，随机选一个联系人回复
+    let replier = postAuthor;
+    if (postAuthor === 'user') {
+        const contacts = getCustomContacts().filter(c => c.persona);
+        if (contacts.length > 0) {
+            replier = contacts[Math.floor(Math.random() * contacts.length)].name;
+        } else {
+            return; // 没有联系人可以回复
+        }
+    }
+    
+    const contacts = getCustomContacts();
+    const contact = contacts.find(c => c.name === replier);
+    const persona = contact?.persona || '';
+    
+    if (!persona) return;
+    
+    const config = JSON.parse(localStorage.getItem('apiConfig')) || {};
+    if (!config.url || !config.model) return;
+    
+    const posts = getPosts();
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+    
+    const userData = getUserData();
+    const userName = userData.name || '用户';
+    
+    const prompt = `【任务】
+你是"${replier}"，需要回复用户在你朋友圈下的评论。
+
+【你的人设】
+${persona}
+
+【你发的朋友圈】
+${post.content}
+
+【用户(${userName})的评论】
+${userComment}
+
+【要求】
+1. 用符合你人设的语气回复
+2. 简短自然，像真实的朋友圈回复（5-30字）
+3. 可以用表情符号
+4. 直接输出回复内容，不要任何其他说明`;
+
+    let apiUrl = config.url.replace(/\/$/, '');
+    if (!apiUrl.endsWith('/chat/completions')) {
+        apiUrl += '/chat/completions';
+    }
+    
+    const headers = { 'Content-Type': 'application/json' };
+    if (config.key) {
+        headers['Authorization'] = `Bearer ${config.key}`;
+    }
+    
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+                model: config.model,
+                messages: [
+                    { role: 'system', content: '你是一个社交媒体用户，正在回复朋友圈评论。' },
+                    { role: 'user', content: prompt }
+                ],
+                temperature: 0.8
+            })
+        });
+        
+        if (!response.ok) return;
+        
+        const data = await response.json();
+        const reply = data.choices?.[0]?.message?.content?.trim() || '';
+        
+        if (reply) {
+            // 添加AI回复
+            addPostComment(postId, replier, reply, userName);
+            if (refreshCallback) refreshCallback();
+        }
+    } catch (e) {
+        console.error('生成评论回复失败:', e);
+    }
+}
+
+// 获取朋友圈上下文（供AI参考）
+function getMomentsContext() {
+    const posts = getPosts();
+    if (posts.length === 0) return '';
+    
+    const userData = getUserData();
+    const userName = userData.name || '用户';
+    
+    // 只取最近10条朋友圈
+    const recentPosts = posts.slice(0, 10);
+    
+    const postsText = recentPosts.map(post => {
+        let authorName;
+        if (post.author === 'user') {
+            authorName = userName + '（用户自己）';
+        } else {
+            const saved = getContactData(post.author);
+            authorName = saved?.nickname || post.author;
+        }
+        
+        let text = `• ${authorName}：${post.content}`;
+        if (post.imageDesc) {
+            text += ` [配图：${post.imageDesc}]`;
+        }
+        text += ` (${post.time})`;
+        return text;
+    }).join('\n');
+    
+    return `[朋友圈动态（最近${recentPosts.length}条）]
+以下是朋友圈的最新动态，你可以在聊天中自然地提到这些内容：
+${postsText}
+
+提示：可以评论别人的朋友圈、询问朋友圈里提到的事情、或者在对话中自然地引用这些动态。`;
+}
+
+// 显示图片描述弹窗
+function showImageDescription(desc) {
+    const modal = document.createElement('div');
+    modal.className = 'image-desc-modal';
+    modal.innerHTML = `
+        <div class="image-desc-content">
+            <div class="image-desc-title">📷 图片内容</div>
+            <div class="image-desc-text">${escapeHtml(desc)}</div>
+            <button class="image-desc-close">知道了</button>
+        </div>
+    `;
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal || e.target.classList.contains('image-desc-close')) {
+            modal.classList.add('fade-out');
+            setTimeout(() => modal.remove(), 200);
+        }
+    });
+    
+    document.body.appendChild(modal);
+    setTimeout(() => modal.classList.add('active'), 10);
+}
+
+// 联系人发朋友圈
+const CONTACT_POST_IMAGE = 'https://static.eeo.cn/upload/images/20251129/ca6e37f411c8b7241993.png';
+
+async function generateContactPost(contactName) {
+    const contacts = getCustomContacts();
+    const contact = contacts.find(c => c.name === contactName);
+    const persona = contact?.persona || '';
+    
+    if (!persona) {
+        alert('该联系人没有设置人设，无法生成朋友圈');
+        return null;
+    }
+    
+    const config = JSON.parse(localStorage.getItem('apiConfig')) || {};
+    if (!config.url || !config.model) {
+        alert('请先配置API');
+        return null;
+    }
+    
+    const userData = getUserData();
+    const userName = userData.name || '用户';
+    
+    const prompt = `【任务】
+你需要以"${contactName}"的身份，写一条朋友圈动态。
+
+【${contactName}的人设】
+${persona}
+
+【写作要求】
+1. 内容要完全符合人设性格和说话风格
+2. 可以是日常分享、心情感悟、秀恩爱、炫耀、吐槽等任何类型
+3. 可以选择是否配图（50%概率配图）
+4. 长度适中，像真实的朋友圈（20-100字）
+5. 可以包含表情符号
+6. 如果有对${userName}的暗示或提及会更好（但不强求）
+
+【输出格式】
+如果配图，输出格式：
+[图片:图片内容描述]
+朋友圈文字内容
+
+例如：
+[图片:窗边的咖啡和书本，阳光洒落]
+今天的下午茶时光~
+
+如果不配图，直接输出：
+朋友圈文字内容
+
+注意：只输出朋友圈内容，不要有任何其他说明。`;
+
+    let apiUrl = config.url.replace(/\/$/, '');
+    if (!apiUrl.endsWith('/chat/completions')) {
+        apiUrl += '/chat/completions';
+    }
+    
+    const headers = { 'Content-Type': 'application/json' };
+    if (config.key) {
+        headers['Authorization'] = `Bearer ${config.key}`;
+    }
+    
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+                model: config.model,
+                messages: [
+                    { role: 'system', content: '你是一个社交媒体内容创作者，擅长根据人物性格创作真实感的朋友圈动态。' },
+                    { role: 'user', content: prompt }
+                ],
+                temperature: 0.9
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`API错误: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content || '';
+        
+        // 解析是否有图片和图片描述
+        let hasImage = false;
+        let imageDesc = '';
+        let postContent = content.trim();
+        
+        // 匹配 [图片:描述] 或 [图片]
+        const imageMatch = postContent.match(/^\[图片[:：]?([^\]]*)\]/);
+        if (imageMatch) {
+            hasImage = true;
+            imageDesc = imageMatch[1]?.trim() || '图片';
+            postContent = postContent.replace(imageMatch[0], '').trim();
+        }
+        
+        // 创建朋友圈
+        const posts = getPosts();
+        const newPost = {
+            id: Date.now(),
+            author: contactName,
+            content: postContent,
+            time: new Date().toLocaleString('zh-CN'),
+            image: hasImage ? CONTACT_POST_IMAGE : null,
+            imageDesc: hasImage ? imageDesc : null
+        };
+        
+        posts.unshift(newPost);
+        savePosts(posts);
+        
+        return newPost;
+    } catch (e) {
+        console.error('生成朋友圈失败:', e);
+        alert('生成朋友圈失败: ' + e.message);
+        return null;
+    }
+}
+
+// 在手机界面触发联系人发朋友圈
+async function triggerContactPost() {
+    if (!currentViewingContact) return;
+    
+    const saved = getContactData(currentViewingContact);
+    const displayName = saved?.nickname || currentViewingContact;
+    
+    // 显示加载提示
+    const loadingToast = document.createElement('div');
+    loadingToast.className = 'loading-toast';
+    loadingToast.innerHTML = `<div class="loading-spinner"></div><span>${displayName}正在发朋友圈...</span>`;
+    loadingToast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:20px 30px;border-radius:12px;z-index:9999;display:flex;align-items:center;gap:12px;';
+    document.body.appendChild(loadingToast);
+    
+    const post = await generateContactPost(currentViewingContact);
+    
+    loadingToast.remove();
+    
+    if (post) {
+        alert(`${displayName}发布了一条朋友圈！`);
+        // 刷新空间视图（如果打开的话）
+        if (spaceView.classList.contains('active')) {
+            loadPosts();
+        }
+    }
+}
+
+// 随机选择联系人发朋友圈（空间界面刷新按钮）
+async function triggerRandomContactPost() {
+    const contacts = getCustomContacts();
+    
+    // 过滤出有人设的联系人
+    const contactsWithPersona = contacts.filter(c => c.persona && c.persona.trim());
+    
+    if (contactsWithPersona.length === 0) {
+        alert('没有设置人设的联系人，无法生成朋友圈');
+        return;
+    }
+    
+    // 随机选择一个联系人
+    const randomContact = contactsWithPersona[Math.floor(Math.random() * contactsWithPersona.length)];
+    const saved = getContactData(randomContact.name);
+    const displayName = saved?.nickname || randomContact.name;
+    
+    // 显示加载提示
+    const loadingToast = document.createElement('div');
+    loadingToast.className = 'loading-toast';
+    loadingToast.innerHTML = `<div class="loading-spinner"></div><span>${displayName}正在发朋友圈...</span>`;
+    loadingToast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:20px 30px;border-radius:12px;z-index:9999;display:flex;align-items:center;gap:12px;';
+    document.body.appendChild(loadingToast);
+    
+    const post = await generateContactPost(randomContact.name);
+    
+    loadingToast.remove();
+    
+    if (post) {
+        loadPosts();
+    }
 }
 
 // ========== 手机功能 ==========
@@ -1125,13 +1665,6 @@ function openContactPhoneView(contactName) {
         timeElement.textContent = `${hours}:${minutes}`;
     }
     
-    // 设置随机壁纸
-    const phoneScreen = document.querySelector('.phone-screen');
-    if (phoneScreen) {
-        const randomId = Math.floor(Math.random() * 1000);
-        phoneScreen.style.backgroundImage = `url('https://picsum.photos/400/800?random=${randomId}')`;
-    }
-    
     contactPhoneView.classList.add('active');
     saveViewState('contactPhone', { contactName });
 }
@@ -1200,62 +1733,47 @@ function openPhoneApp(appType) {
     switch(appType) {
         case 'sms':
             phoneAppDetailTitle.textContent = '微信';
-            phoneSmsTabbar.style.display = 'flex';
             phoneAppDetailContent.style.padding = '0';
             phoneAppDetailContent.style.gap = '0';
-            switchPhoneSmsTab('messages');
+            loadPhoneSmsMessages();
             break;
         case 'call':
             phoneAppDetailTitle.textContent = '通话记录';
-            phoneSmsTabbar.style.display = 'none';
             phoneAppDetailContent.style.padding = '20px';
             phoneAppDetailContent.style.gap = '12px';
             loadPhoneAppCall();
             break;
         case 'note':
             phoneAppDetailTitle.textContent = '便签';
-            phoneSmsTabbar.style.display = 'none';
             phoneAppDetailContent.style.padding = '20px';
             phoneAppDetailContent.style.gap = '12px';
             loadPhoneAppNote();
             break;
         case 'browser':
             phoneAppDetailTitle.textContent = '浏览器';
-            phoneSmsTabbar.style.display = 'none';
             phoneAppDetailContent.style.padding = '20px';
             phoneAppDetailContent.style.gap = '12px';
             loadPhoneAppBrowser();
             break;
         case 'diary':
             phoneAppDetailTitle.textContent = '日记';
-            phoneSmsTabbar.style.display = 'none';
             phoneAppDetailContent.style.padding = '20px';
             phoneAppDetailContent.style.gap = '12px';
             loadPhoneAppDiary();
             break;
+        case 'peek':
+            phoneAppDetailTitle.textContent = '窥视';
+            phoneAppDetailContent.style.padding = '20px';
+            phoneAppDetailContent.style.gap = '12px';
+            loadPhoneAppPeek();
+            break;
     }
+    
+    // 所有APP都显示刷新按钮
+    phoneAppRefreshBtn.style.display = 'flex';
     
     phoneAppDetailView.classList.add('active');
     saveViewState('phoneAppDetail', { contactName: currentViewingContact, appType });
-}
-
-function switchPhoneSmsTab(tab) {
-    // 清除所有active
-    phoneTabMessages.classList.remove('active');
-    phoneTabContacts.classList.remove('active');
-    phoneTabMoments.classList.remove('active');
-    
-    // 切换tab样式和内容
-    if (tab === 'messages') {
-        phoneTabMessages.classList.add('active');
-        loadPhoneSmsMessages();
-    } else if (tab === 'contacts') {
-        phoneTabContacts.classList.add('active');
-        loadPhoneSmsContacts();
-    } else if (tab === 'moments') {
-        phoneTabMoments.classList.add('active');
-        loadPhoneMoments();
-    }
 }
 
 let inPhoneChatDetail = false; // 是否在手机短信聊天详情中
@@ -1264,13 +1782,11 @@ function closePhoneAppDetail() {
     // 如果在聊天详情中，返回到消息列表
     if (inPhoneChatDetail && currentPhoneApp === 'sms') {
         inPhoneChatDetail = false;
-        phoneSmsTabbar.style.display = 'flex';
-        switchPhoneSmsTab('messages');
+        loadPhoneSmsMessages();
         return;
     }
     
     phoneAppDetailView.classList.remove('active');
-    phoneSmsTabbar.style.display = 'none';
     inPhoneChatDetail = false;
     saveViewState('contactPhone', { contactName: currentViewingContact });
 }
@@ -1380,8 +1896,7 @@ function loadPhoneSmsMessages() {
 
 // 查看单个对话详情
 function viewPhoneConversation(conversation) {
-    // 隐藏tabbar，标记进入聊天详情
-    phoneSmsTabbar.style.display = 'none';
+    // 标记进入聊天详情
     inPhoneChatDetail = true;
     
     phoneAppDetailContent.innerHTML = '';
@@ -1422,9 +1937,8 @@ function viewPhoneConversation(conversation) {
 }
 
 // 查看真实聊天记录（和用户的对话）
-function viewRealChatHistory(history) {
-    // 隐藏tabbar，标记进入聊天详情
-    phoneSmsTabbar.style.display = 'none';
+function viewRealChatHistory(history, showAll = false) {
+    // 标记进入聊天详情
     inPhoneChatDetail = true;
     
     phoneAppDetailContent.innerHTML = '';
@@ -1437,11 +1951,27 @@ function viewRealChatHistory(history) {
     messagesArea.className = 'phone-chat-messages';
     messagesArea.style.cssText = 'flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px;';
     
-    // 显示所有消息，对调视角
+    // 消息折叠逻辑
+    const hasMoreHistory = history.length > MESSAGE_DISPLAY_LIMIT && !showAll;
+    const displayHistory = hasMoreHistory ? history.slice(-MESSAGE_DISPLAY_LIMIT) : history;
+    const hiddenCount = history.length - displayHistory.length;
+    
+    // 添加展开历史记录按钮
+    if (hasMoreHistory) {
+        const expandBtn = document.createElement('div');
+        expandBtn.className = 'expand-history-btn';
+        expandBtn.innerHTML = `<span>展开历史记录 (${hiddenCount}条)</span>`;
+        expandBtn.addEventListener('click', () => {
+            viewRealChatHistory(history, true);
+        });
+        messagesArea.appendChild(expandBtn);
+    }
+    
+    // 显示消息，对调视角
     // 在联系人的手机中：
     // - 用户发送的消息(sent) -> 他收到的(received)
     // - 他发送的消息(received) -> 他发送的(sent)
-    history.forEach((msg) => {
+    displayHistory.forEach((msg) => {
         const bubble = document.createElement('div');
         
         // 对调视角
@@ -1479,140 +2009,12 @@ function viewRealChatHistory(history) {
     `;
     phoneAppDetailContent.appendChild(inputArea);
     
-    messagesArea.scrollTop = messagesArea.scrollHeight;
-}
-
-// 加载短信APP的联系人列表
-function loadPhoneSmsContacts() {
-    phoneAppDetailContent.innerHTML = '';
-    phoneAppDetailContent.style.display = 'block';
-    phoneAppDetailContent.style.padding = '20px';
-    
-    // 获取用户设置
-    const userSettings = getUserSettings();
-    const userName = userSettings.name || '用户';
-    
-    // 获取联系人给用户起的备注（如果有）
-    const userNickname = getGeneratedPhoneData(currentViewingContact, 'userNickname') || userName;
-    
-    // 获取和用户的真实聊天记录
-    const realChatHistory = getChatHistory(currentViewingContact);
-    
-    // 获取AI生成的对话
-    const generatedConversations = getGeneratedPhoneData(currentViewingContact, 'conversations') || [];
-    
-    const allContacts = [];
-    
-    // 第一个联系人：用户（如果有聊天记录）
-    if (realChatHistory.length > 0) {
-        allContacts.push({ name: userNickname, isUser: true }); // 使用备注
+    // 根据是否展开决定滚动位置
+    if (showAll) {
+        messagesArea.scrollTop = 0;
+    } else {
+        messagesArea.scrollTop = messagesArea.scrollHeight;
     }
-    
-    // 其他联系人（从AI生成的对话中提取）
-    generatedConversations.forEach(conv => {
-        allContacts.push({ name: conv.friend, isUser: false });
-    });
-    
-    if (allContacts.length === 0) {
-        phoneAppDetailContent.innerHTML = '<div class="app-content-empty" style="padding: 40px 20px;">暂无联系人<br><br>点击右上角刷新按钮让AI生成内容</div>';
-        return;
-    }
-    
-    // 获取用户头像
-    const userAvatar = userSettings.avatar || '';
-    
-    // 显示联系人列表
-    allContacts.forEach((contact, index) => {
-        const item = document.createElement('div');
-        item.className = 'phone-contact-item';
-        item.style.animationDelay = `${index * 0.05}s`;
-        item.style.animation = 'fadeIn 0.3s ease forwards';
-        
-        // 如果是用户，显示用户头像
-        let avatarHtml;
-        if (contact.isUser && userAvatar) {
-            avatarHtml = `<div class="phone-contact-avatar"><img src="${userAvatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`;
-        } else {
-            avatarHtml = `<div class="phone-contact-avatar">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-            </div>`;
-        }
-        
-        item.innerHTML = `
-            ${avatarHtml}
-            <div class="phone-contact-name">${contact.name}</div>
-        `;
-        
-        phoneAppDetailContent.appendChild(item);
-    });
-}
-
-// 加载微信朋友圈（在联系人手机中）
-function loadPhoneMoments() {
-    phoneAppDetailContent.innerHTML = '';
-    phoneAppDetailContent.style.display = 'block';
-    phoneAppDetailContent.style.padding = '20px';
-    phoneAppDetailContent.style.gap = '16px';
-    
-    const posts = getPosts();
-    
-    if (posts.length === 0) {
-        phoneAppDetailContent.innerHTML = '<div class="app-content-empty">暂无朋友圈动态</div>';
-        return;
-    }
-    
-    posts.forEach((post, index) => {
-        const card = document.createElement('div');
-        card.className = 'phone-moment-card';
-        card.style.animationDelay = `${index * 0.05}s`;
-        card.style.animation = 'fadeIn 0.3s ease forwards';
-        
-        let authorName, avatarHtml;
-        
-        if (post.author === 'user') {
-            const userData = getUserData();
-            authorName = userData.name || '我';
-            if (userData.avatar) {
-                avatarHtml = `<div class="moment-avatar"><img src="${userData.avatar}"></div>`;
-            } else {
-                avatarHtml = `<div class="moment-avatar">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </div>`;
-            }
-        } else {
-            const saved = getContactData(post.author);
-            authorName = saved?.nickname || post.author;
-            if (saved?.avatar) {
-                avatarHtml = `<div class="moment-avatar"><img src="${saved.avatar}"></div>`;
-            } else {
-                avatarHtml = `<div class="moment-avatar" style="background:${saved?.color || 'var(--accent)'}">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </div>`;
-            }
-        }
-        
-        card.innerHTML = `
-            <div class="moment-header">
-                ${avatarHtml}
-                <div class="moment-info">
-                    <div class="moment-author">${authorName}</div>
-                    <div class="moment-time">${post.time}</div>
-                </div>
-            </div>
-            <div class="moment-content">${escapeHtml(post.content)}</div>
-        `;
-        
-        phoneAppDetailContent.appendChild(card);
-    });
 }
 
 function loadPhoneAppCall() {
@@ -1960,6 +2362,151 @@ function loadPhoneAppDiary() {
     });
 }
 
+// 窥视APP - AI生成联系人内心独白
+async function loadPhoneAppPeek() {
+    phoneAppDetailContent.innerHTML = '';
+    
+    const saved = getContactData(currentViewingContact);
+    const displayName = saved?.nickname || currentViewingContact;
+    
+    // 检查是否有已生成的内容
+    const existingContent = getGeneratedPhoneData(currentViewingContact, 'peek');
+    if (existingContent) {
+        renderPeekContent(existingContent, displayName);
+        return;
+    }
+    
+    // 显示加载状态
+    phoneAppDetailContent.innerHTML = `
+        <div class="app-content-empty">
+            <div class="loading-spinner"></div>
+            <div style="margin-top: 12px;">正在窥视${displayName}的内心...</div>
+        </div>
+    `;
+    
+    // 获取联系人人设
+    const contacts = getCustomContacts();
+    const contact = contacts.find(c => c.name === currentViewingContact);
+    const persona = contact?.persona || '';
+    
+    if (!persona) {
+        phoneAppDetailContent.innerHTML = `<div class="app-content-empty">该联系人没有设置人设<br><br>请先在联系人管理中设置人设</div>`;
+        return;
+    }
+    
+    // 获取用户信息
+    const userData = getUserData();
+    const userDisplayName = userData.name || '用户';
+    
+    // 构建AI请求
+    try {
+        const content = await generatePeekContent(displayName, persona, userDisplayName, userData.persona);
+        if (content) {
+            saveGeneratedPhoneData(currentViewingContact, 'peek', content);
+            renderPeekContent(content, displayName);
+        }
+    } catch (e) {
+        phoneAppDetailContent.innerHTML = `<div class="app-content-empty">生成失败: ${e.message}<br><br>点击右上角刷新重试</div>`;
+    }
+}
+
+// 生成窥视内容
+async function generatePeekContent(contactName, contactPersona, userName, userPersona) {
+    const config = JSON.parse(localStorage.getItem('apiConfig')) || {};
+    
+    if (!config.url || !config.model) {
+        throw new Error('请先配置API');
+    }
+    
+    const prompt = `【任务】
+你需要以"${contactName}"的身份，写一篇600字左右的内心独白日记。
+
+【${contactName}的人设】
+${contactPersona}
+
+【对象信息】
+${contactName}对"${userName}"有着复杂的情感。
+${userPersona ? `${userName}的信息：${userPersona}` : ''}
+
+【写作要求】
+1. 以第一人称"我"来写，这是${contactName}藏在心底最深处、从不会让任何人知道的秘密日记
+2. 必须体现以下负面心理特征（全部包含）：
+   - 阴暗扭曲的想法
+   - 强烈的占有欲和控制欲
+   - 无法言说的情欲和渴望
+   - 嫉妒、偏执、甚至病态的执念
+3. 内容要符合人设性格，但要展现人设背后隐藏的黑暗面
+4. 要有具体的心理描写和内心挣扎
+5. 可以包含对${userName}的执念、幻想、甚至不可告人的欲望
+6. 语气要真实、私密，像是写给自己看的最隐秘的心事
+7. 600字左右，分段书写
+
+【格式】
+直接输出内心独白内容，不要有任何前缀或说明。`;
+
+    let apiUrl = config.url.replace(/\/$/, '');
+    if (!apiUrl.endsWith('/chat/completions')) {
+        apiUrl += '/chat/completions';
+    }
+    
+    const headers = { 'Content-Type': 'application/json' };
+    if (config.key) {
+        headers['Authorization'] = `Bearer ${config.key}`;
+    }
+    
+    const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+            model: config.model,
+            messages: [
+                { role: 'system', content: '你是一个擅长深度心理描写的作家，擅长刻画人物内心最阴暗、最隐秘的一面。你的文字细腻、真实、直击人心。' },
+                { role: 'user', content: prompt }
+            ],
+            temperature: 0.9
+        })
+    });
+    
+    if (!response.ok) {
+        throw new Error(`API错误: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || '';
+}
+
+// 渲染窥视内容
+function renderPeekContent(content, contactName) {
+    phoneAppDetailContent.innerHTML = '';
+    
+    const container = document.createElement('div');
+    container.className = 'peek-content-container';
+    
+    container.innerHTML = `
+        <div class="peek-header">
+            <div class="peek-title">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                ${contactName}的内心深处
+            </div>
+            <div class="peek-warning">⚠ 隐秘独白</div>
+        </div>
+        <div class="peek-text">${escapeHtml(content).replace(/\n/g, '<br>')}</div>
+    `;
+    
+    // 长按删除
+    addLongPressDelete(container, () => {
+        if (confirm('删除这篇内心独白？')) {
+            deletePhoneDataItem(currentViewingContact, 'peek', 0);
+            loadPhoneAppPeek();
+        }
+    });
+    
+    phoneAppDetailContent.appendChild(container);
+}
+
 // 获取/保存生成的手机内容
 function getGeneratedPhoneData(contactName, type) {
     try {
@@ -1983,12 +2530,20 @@ function saveGeneratedPhoneData(contactName, type, content) {
     }
 }
 
-// 删除手机数据的某一项
+// 删除手机数据的某一项（index=-1表示删除该类型的全部数据）
 function deletePhoneDataItem(contactName, type, index) {
     try {
         const data = JSON.parse(localStorage.getItem('generatedPhoneData')) || {};
-        if (data[contactName] && data[contactName][type] && Array.isArray(data[contactName][type])) {
-            data[contactName][type].splice(index, 1);
+        if (data[contactName] && data[contactName][type]) {
+            if (index === -1) {
+                // 删除该类型的全部数据
+                delete data[contactName][type];
+            } else if (Array.isArray(data[contactName][type])) {
+                data[contactName][type].splice(index, 1);
+            } else {
+                // 非数组类型（如peek的字符串），直接删除
+                delete data[contactName][type];
+            }
             localStorage.setItem('generatedPhoneData', JSON.stringify(data));
         }
     } catch (e) {
@@ -2116,15 +2671,15 @@ ${existingSummary ? `【已有内容】
 ${existingSummary}
 请生成新的内容，不要重复已有的。` : ''}
 
-${existingConversationsDetail ? `【已有微信对话历史 - 请继续这些对话】
+${existingConversationsDetail ? `【已有微信对话历史】
 ${existingConversationsDetail}
-（请选择其中一个朋友继续对话，在原有消息基础上追加新的对话内容）` : ''}
+（你可以选择继续其中1-2个对话，也可以新增一个新朋友的对话）` : ''}
 
 请根据${displayName}的人设和身份，生成TA手机里的**新增**内容（以JSON格式返回）：
 
 1. userNickname: ${displayName}给${userName}起的备注/昵称（${existingUserNickname ? `当前是"${existingUserNickname}"，可以根据剧情更新` : '根据剧情发展和关系设定'}）
 2. diary: 1-2条**新的**个人日记，每条包含time（时间如"2024年1月15日 晴"）和content（内容）
-3. conversations: ${existingConversations.length > 0 ? `继续与已有朋友（${existingConversations.map(c => c.friend).join('、')}）的对话，追加2-4条新消息` : '1段**新的**和朋友的微信对话（朋友名字由你根据人设自由创造，不要是' + userName + '）'}，包含friend（朋友名字）和messages（仅新增的消息数组）
+3. conversations: ${existingConversations.length > 0 ? `可以继续与已有朋友（${existingConversations.map(c => c.friend).join('、')}）中1-2个人的对话，也可以新增一个朋友的对话` : '1-2段**新的**和不同朋友的微信对话（朋友名字由你根据人设自由创造，不要是' + userName + '）'}，每段包含friend（朋友名字）和messages（消息数组），可以返回多个对话
 4. notes: 1条**新的**便签内容
 5. callHistory: 1-2条**新的**通话记录（注意：通话对象不能是${userName}，只能是其他朋友），每条包含name、type（incoming/outgoing/missed）、time、duration、transcript（通话内容，数组格式，有来有回的完整对话）
 6. browser: 1-2条**新的**浏览器历史记录，每条包含title、url、time、content（网页的主要内容摘要，50-100字）
@@ -2134,7 +2689,8 @@ ${existingConversationsDetail}
 - 这是增量生成，只生成新内容，会追加到已有内容中
 - userNickname可以根据剧情发展更新
 - 内容要与当前剧情相关
-- conversations中的messages只返回新增的消息，会自动追加到已有对话末尾
+- conversations可以包含多个对话对象，每个对话的messages只返回新增的消息
+- 对于已有的朋友，新消息会追加到已有对话末尾；新朋友会创建新对话
 - 通话记录(callHistory)中的name不能是${userName}，只能是其他朋友的名字
 
 请严格按照以下JSON格式返回（不要添加任何markdown标记）：
@@ -2145,10 +2701,17 @@ ${existingConversationsDetail}
   ],
   "conversations": [
     {
-      "friend": "${existingConversations.length > 0 ? existingConversations[0].friend : '朋友名字'}",
+      "friend": "${existingConversations.length > 0 ? existingConversations[0].friend : '朋友A'}",
       "messages": [
-        {"sender": "我", "text": "新消息内容"},
-        {"sender": "${existingConversations.length > 0 ? existingConversations[0].friend : '朋友名字'}", "text": "新回复内容"}
+        {"sender": "我", "text": "消息内容..."},
+        {"sender": "${existingConversations.length > 0 ? existingConversations[0].friend : '朋友A'}", "text": "回复内容..."}
+      ]
+    },
+    {
+      "friend": "${existingConversations.length > 1 ? existingConversations[1].friend : '朋友B'}",
+      "messages": [
+        {"sender": "${existingConversations.length > 1 ? existingConversations[1].friend : '朋友B'}", "text": "消息内容..."},
+        {"sender": "我", "text": "回复内容..."}
       ]
     }
   ],
@@ -2178,14 +2741,60 @@ ${existingConversationsDetail}
         let generatedData;
         try {
             // 提取JSON（可能被markdown包裹）
-            const jsonMatch = response.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-                generatedData = JSON.parse(jsonMatch[0]);
-            } else {
-                throw new Error('无法解析JSON');
+            let jsonStr = response;
+            
+            // 移除markdown代码块标记
+            jsonStr = jsonStr.replace(/```json\s*/gi, '').replace(/```\s*/g, '');
+            
+            // 找到第一个 { 和最后一个匹配的 }
+            const firstBrace = jsonStr.indexOf('{');
+            if (firstBrace === -1) {
+                throw new Error('无法找到JSON起始');
             }
+            
+            // 从第一个 { 开始，找到匹配的 }（跳过字符串内的大括号）
+            let braceCount = 0;
+            let lastBrace = -1;
+            let inString = false;
+            let escapeNext = false;
+            for (let i = firstBrace; i < jsonStr.length; i++) {
+                const char = jsonStr[i];
+                
+                if (escapeNext) {
+                    escapeNext = false;
+                    continue;
+                }
+                
+                if (char === '\\') {
+                    escapeNext = true;
+                    continue;
+                }
+                
+                if (char === '"') {
+                    inString = !inString;
+                    continue;
+                }
+                
+                if (inString) continue;
+                
+                if (char === '{') braceCount++;
+                else if (char === '}') {
+                    braceCount--;
+                    if (braceCount === 0) {
+                        lastBrace = i;
+                        break;
+                    }
+                }
+            }
+            
+            if (lastBrace === -1) {
+                throw new Error('JSON大括号不匹配');
+            }
+            
+            jsonStr = jsonStr.substring(firstBrace, lastBrace + 1);
+            generatedData = JSON.parse(jsonStr);
         } catch (parseError) {
-            console.error('JSON解析失败', parseError);
+            console.error('JSON解析失败', parseError, '\n原始响应:', response);
             alert('AI生成的内容格式有误，请重试');
             return;
         }
@@ -2334,14 +2943,19 @@ function loadOfflineMessages() {
         return;
     }
     
-    history.forEach(msg => {
+    history.forEach((msg, index) => {
         if (msg.type === 'user') {
-            addUserMessage(msg.text, false);
+            addUserMessage(msg.text, false, index);
         } else if (msg.type === 'narration') {
-            addNarrationMessage(msg.text, false);
+            addNarrationMessage(msg.text, false, index);
         } else {
-            addAIMessage(msg.text, msg.roleName || '???', false);
+            addAIMessage(msg.text, msg.roleName || '???', false, index);
         }
+    });
+    
+    // 加载完成后直接定位到底部（不使用滚动动画）
+    requestAnimationFrame(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
     });
 }
 
@@ -2372,9 +2986,12 @@ function clearAllData() {
         'apiConfig',         // API配置
         'fontConfig',        // 字体配置
         'worldBook',         // 世界书
+        'worldBookFiles',    // 世界书文件
         'presetPrompts',     // 预设
+        'presetFiles',       // 预设文件
         'currentPreset',     // 当前预设
-        'regexScripts'       // 正则脚本
+        'regexScripts',      // 正则脚本
+        'regexList'          // 正则列表
     ];
     
     // 获取所有键
@@ -2748,21 +3365,21 @@ function addGeneratedCharacter(character) {
 }
 
 // 添加旁白/叙述消息
-function addNarrationMessage(text, save = true) {
+function addNarrationMessage(text, save = true, historyIndex = null) {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message narration-msg';
     messageDiv.innerHTML = `<div class="message-content narration">${formatMessageText(text)}</div>`;
     
     // 存储索引
     const history = getOfflineHistory();
-    messageDiv.dataset.index = save ? history.length : history.length - 1;
+    messageDiv.dataset.index = historyIndex !== null ? historyIndex : history.length;
     
     messagesContainer.appendChild(messageDiv);
-    messageDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
     
     if (save) {
         history.push({ type: 'narration', text });
         saveOfflineHistory(history);
+        messageDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
     
     // 添加长按菜单
@@ -2854,7 +3471,7 @@ function sendSmsFromAI(contactName, content) {
         return;
     }
     
-    console.log('发送短信:', contact.name, content);
+    console.log('【短信】发送短信:', contact.name, content);
     
     const saved = getContactData(contact.name);
     const displayName = saved?.nickname || contact.name;
@@ -2868,6 +3485,7 @@ function sendSmsFromAI(contactName, content) {
     
     // 检查用户是否正在和该联系人聊天
     const isInChat = chatDetailView && chatDetailView.classList.contains('active') && originalChatName === contact.name;
+    console.log('【短信】isInChat:', isInChat, 'will show notification:', !isInChat);
     
     // 添加到聊天记录（每句话一条消息，解析表情）
     const history = getChatHistory(contact.name);
@@ -2903,10 +3521,10 @@ function sendSmsFromAI(contactName, content) {
             });
         });
     } else {
-        // 不在聊天界面时显示通知
-        lastNotificationContact = contact.name;
-        console.log('显示通知:', displayName, messagesToSend[0]);
-        showSmsNotification(displayName, messagesToSend[0], saved?.avatar, saved?.color);
+        // 不在聊天界面，显示通知
+        // 合并所有消息作为通知内容
+        const notificationText = messagesToSend.join(' ');
+        showWechatNotification(contact.name, notificationText, saved?.color, saved?.avatar);
     }
     
     // 刷新短信列表和徽章
@@ -2927,6 +3545,7 @@ function addUnreadCount(contactName) {
     const counts = getUnreadCounts();
     counts[contactName] = (counts[contactName] || 0) + 1;
     localStorage.setItem('unreadCounts', JSON.stringify(counts));
+    console.log('【未读】增加未读计数:', contactName, '当前计数:', counts);
     updateSmsBadge();
 }
 
@@ -2934,7 +3553,10 @@ function clearUnreadCount(contactName) {
     const counts = getUnreadCounts();
     delete counts[contactName];
     localStorage.setItem('unreadCounts', JSON.stringify(counts));
+    console.log('【未读】清除未读计数:', contactName, '剩余计数:', counts);
     updateSmsBadge();
+    // 刷新消息列表以更新未读徽章显示
+    loadSmsMessages();
 }
 
 function getTotalUnreadCount() {
@@ -2944,66 +3566,118 @@ function getTotalUnreadCount() {
 
 function updateSmsBadge() {
     const total = getTotalUnreadCount();
-    console.log('更新徽章, 未读总数:', total);
+    console.log('【徽章】更新徽章, 未读总数:', total, 'smsBadge元素:', smsBadge);
+    if (!smsBadge) {
+        console.error('【徽章】smsBadge元素不存在！');
+        return;
+    }
     if (total > 0) {
         smsBadge.textContent = total > 99 ? '99+' : total;
         smsBadge.classList.add('active');
         smsBadge.style.display = 'flex'; // 强制显示
+        console.log('【徽章】显示徽章:', total);
     } else {
         smsBadge.classList.remove('active');
         smsBadge.style.display = 'none';
+        console.log('【徽章】隐藏徽章');
     }
 }
 
-// 显示消息通知弹窗
-let notificationTimer = null;
-
-function showSmsNotification(name, text, avatarImg, avatarColor) {
-    // 设置头像
-    if (avatarImg) {
-        notificationAvatar.innerHTML = `<img src="${avatarImg}">`;
-        notificationAvatar.style.background = 'transparent';
-    } else {
-        notificationAvatar.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
-        notificationAvatar.style.background = avatarColor || 'var(--accent)';
+// ========== 微信消息通知 ==========
+function showWechatNotification(contactName, message, avatarColor, avatarUrl) {
+    console.log('【通知】尝试显示通知:', contactName, message);
+    
+    // 检查是否在聊天详情界面且正在和该联系人聊天
+    const isInThisChat = chatDetailView && 
+                         chatDetailView.classList.contains('active') && 
+                         originalChatName === contactName;
+    
+    console.log('【通知】isInThisChat:', isInThisChat, 'chatDetailView.active:', chatDetailView?.classList.contains('active'), 'originalChatName:', originalChatName);
+    
+    // 如果在当前聊天界面，不显示通知
+    if (isInThisChat) {
+        console.log('【通知】用户在聊天界面，跳过通知');
+        return;
     }
     
-    notificationName.textContent = name;
-    notificationText.textContent = text;
+    const saved = getContactData(contactName);
+    const displayName = saved?.nickname || contactName;
+    const color = avatarUrl ? 'transparent' : (avatarColor || saved?.color || 'var(--accent)');
+    const avatar = avatarUrl || saved?.avatar || '';
     
-    // 显示通知
-    smsNotification.classList.add('active');
-    
-    // 清除之前的定时器
-    if (notificationTimer) {
-        clearTimeout(notificationTimer);
+    // 处理消息文本（截取前50个字符，处理特殊内容）
+    let displayMessage = message;
+    if (message.includes('[表情:')) {
+        displayMessage = '[表情]';
+    } else if (message.match(/\[(图片|照片)/)) {
+        displayMessage = '[图片]';
+    } else if (displayMessage.length > 50) {
+        displayMessage = displayMessage.substring(0, 50) + '...';
     }
     
-    // 3秒后自动隐藏
-    notificationTimer = setTimeout(() => {
-        hideSmsNotification();
-    }, 3000);
-}
-
-function hideSmsNotification() {
-    smsNotification.classList.remove('active');
-}
-
-// 点击通知弹窗
-let lastNotificationContact = null;
-
-smsNotification.addEventListener('click', () => {
-    hideSmsNotification();
-    if (lastNotificationContact) {
-        // 先打开抽屉和短信界面
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.className = 'wechat-notification';
+    notification.innerHTML = `
+        <div class="wechat-notification-avatar" style="background: ${color}">
+            ${avatar ? `<img src="${avatar}" onerror="this.style.display='none';this.parentElement.textContent='${displayName.charAt(0)}'">` : displayName.charAt(0)}
+        </div>
+        <div class="wechat-notification-content">
+            <div class="wechat-notification-header">
+                <span class="wechat-notification-app">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    微信
+                </span>
+                <span class="wechat-notification-time">现在</span>
+            </div>
+            <div class="wechat-notification-name">${displayName}</div>
+            <div class="wechat-notification-text">${displayMessage}</div>
+        </div>
+    `;
+    
+    // 点击通知跳转到聊天界面
+    notification.addEventListener('click', () => {
+        // 先关闭通知
+        hideNotification(notification);
+        
+        // 打开微信界面
         if (!smsView.classList.contains('active')) {
             openSmsView();
         }
-        // 然后打开聊天详情
-        const saved = getContactData(lastNotificationContact);
-        openChatDetail(lastNotificationContact, '', saved?.color);
+        
+        // 打开聊天详情
+        setTimeout(() => {
+            openChatDetail(contactName, displayMessage, color);
+        }, 100);
+    });
+    
+    // 添加到容器
+    console.log('【通知】通知容器:', wechatNotificationContainer);
+    if (!wechatNotificationContainer) {
+        console.error('【通知】通知容器不存在！');
+        return;
     }
-});
+    wechatNotificationContainer.appendChild(notification);
+    console.log('【通知】通知已添加到DOM');
+    
+    // 3秒后自动消失
+    setTimeout(() => {
+        hideNotification(notification);
+    }, 3000);
+}
+
+function hideNotification(notification) {
+    if (!notification || !notification.parentElement) return;
+    
+    notification.classList.add('hiding');
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 300);
+}
 
 // 获取所有联系人信息用于 AI
 function getAllContactsInfo() {
@@ -3052,7 +3726,7 @@ function getCurrentTime() {
 }
 
 // 添加用户消息
-function addUserMessage(text, save = true) {
+function addUserMessage(text, save = true, historyIndex = null) {
     const userData = getUserData();
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message user-msg';
@@ -3066,15 +3740,15 @@ function addUserMessage(text, save = true) {
     
     // 存储索引
     const history = getOfflineHistory();
-    messageDiv.dataset.index = save ? history.length : history.length - 1;
+    messageDiv.dataset.index = historyIndex !== null ? historyIndex : history.length;
     
     messagesContainer.appendChild(messageDiv);
-    messageDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
     
     // 保存到线下记录
     if (save) {
         history.push({ type: 'user', text });
         saveOfflineHistory(history);
+        messageDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
     
     // 添加长按菜单（编辑和删除，不需要重新生成）
@@ -3082,7 +3756,7 @@ function addUserMessage(text, save = true) {
 }
 
 // 添加AI消息
-function addAIMessage(text, roleName = '角色', save = true) {
+function addAIMessage(text, roleName = '角色', save = true, historyIndex = null) {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message ai-msg';
     
@@ -3143,15 +3817,15 @@ function addAIMessage(text, roleName = '角色', save = true) {
     
     // 存储索引
     const history = getOfflineHistory();
-    messageDiv.dataset.index = save ? history.length : history.length - 1;
+    messageDiv.dataset.index = historyIndex !== null ? historyIndex : history.length;
     
     messagesContainer.appendChild(messageDiv);
-    messageDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
     
     // 保存到线下记录
     if (save) {
         history.push({ type: 'ai', text, roleName });
         saveOfflineHistory(history);
+        messageDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
     
     // 添加长按菜单
@@ -3779,6 +4453,12 @@ function loadSmsMessages() {
             ? `<span class="sms-unread-badge">${unreadCount > 99 ? '99+' : unreadCount}</span>` 
             : '';
         
+        // 截取消息预览文本（最多30个字符）
+        let previewText = msg.text;
+        if (previewText.length > 30) {
+            previewText = previewText.substring(0, 30) + '...';
+        }
+        
         messageItem.innerHTML = `
             ${avatarHtml}
             <div class="sms-message-content">
@@ -3786,7 +4466,7 @@ function loadSmsMessages() {
                     <span class="sms-message-name">${displayName}</span>
                     <span class="sms-message-time">${msg.time}</span>
                 </div>
-                <div class="sms-message-text">${msg.text}</div>
+                <div class="sms-message-text">${previewText}</div>
             </div>
             ${unreadBadge}
         `;
@@ -3969,10 +4649,25 @@ function loadUserMoments() {
         // 图片HTML
         const imageHtml = post.image ? `
             <div class="moment-image-wrap">
-                <img class="moment-image" src="https://static.eeo.cn/upload/images/20251129/ca6e37f411c8b7241993.png" alt="${escapeHtml(post.image)}">
-                <div class="moment-image-caption">${escapeHtml(post.image)}</div>
+                <img class="moment-image" src="${CONTACT_POST_IMAGE}" alt="${escapeHtml(post.imageDesc || '图片')}">
+                <div class="moment-image-caption">${escapeHtml(post.imageDesc || post.image)}</div>
             </div>
         ` : '';
+        
+        // 点赞列表
+        const likes = post.likes || [];
+        const userLiked = likes.includes('user');
+        const likesHtml = likes.length > 0 ? `<div class="moment-likes">❤️ ${likes.map(l => l === 'user' ? (userData.name || '我') : l).join('、')}</div>` : '';
+        
+        // 评论列表
+        const comments = post.comments || [];
+        const commentsHtml = comments.map(c => {
+            const commenterName = c.author === 'user' ? (userData.name || '我') : c.author;
+            if (c.replyTo) {
+                return `<div class="moment-comment"><span class="moment-comment-author">${commenterName}</span> 回复 <span class="moment-comment-author">${c.replyTo}</span>：${escapeHtml(c.text)}</div>`;
+            }
+            return `<div class="moment-comment"><span class="moment-comment-author">${commenterName}</span>：${escapeHtml(c.text)}</div>`;
+        }).join('');
         
         card.innerHTML = `
             <div class="moment-card-header">
@@ -3990,6 +4685,23 @@ function loadUserMoments() {
             </div>
             ${post.content ? `<div class="moment-content">${escapeHtml(post.content)}</div>` : ''}
             ${imageHtml}
+            <div class="moment-actions">
+                <button class="moment-action-btn moment-like-btn ${userLiked ? 'liked' : ''}" data-post-id="${post.id}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${userLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                </button>
+                <button class="moment-action-btn moment-comment-btn" data-post-id="${post.id}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </button>
+            </div>
+            ${(likes.length > 0 || comments.length > 0) ? `
+            <div class="moment-interactions">
+                ${likesHtml}
+                ${commentsHtml ? `<div class="moment-comments-list">${commentsHtml}</div>` : ''}
+            </div>` : ''}
         `;
         
         // 设置非用户的头像背景色
@@ -4006,6 +4718,17 @@ function loadUserMoments() {
                 deletePost(post.id);
                 loadUserMoments();
             }
+        };
+        
+        // 点赞按钮
+        card.querySelector('.moment-like-btn').onclick = () => {
+            togglePostLike(post.id);
+            loadUserMoments();
+        };
+        
+        // 评论按钮
+        card.querySelector('.moment-comment-btn').onclick = () => {
+            showCommentInput(post.id, post.author, loadUserMoments);
         };
         
         // 点击图片显示/隐藏描述
@@ -4171,6 +4894,8 @@ function saveChatHistory(name, messages) {
     }
 }
 
+const MESSAGE_DISPLAY_LIMIT = 40; // 默认显示的消息数量
+
 function openChatDetail(name, lastMessage, avatarColor) {
     originalChatName = name;
     const saved = getContactData(name);
@@ -4187,9 +4912,25 @@ function openChatDetail(name, lastMessage, avatarColor) {
     
     const history = getChatHistory(name);
     if (history.length > 0) {
+        // 如果消息超过40条，显示展开按钮
+        const hasMoreHistory = history.length > MESSAGE_DISPLAY_LIMIT;
+        const displayHistory = hasMoreHistory ? history.slice(-MESSAGE_DISPLAY_LIMIT) : history;
+        const hiddenCount = history.length - displayHistory.length;
+        
+        // 添加展开历史记录按钮
+        if (hasMoreHistory) {
+            const expandBtn = document.createElement('div');
+            expandBtn.className = 'expand-history-btn';
+            expandBtn.innerHTML = `<span>展开历史记录 (${hiddenCount}条)</span>`;
+            expandBtn.addEventListener('click', () => {
+                loadFullChatHistory(name);
+            });
+            chatDetailMessages.appendChild(expandBtn);
+        }
+        
         let lastTimestamp = null;
         // 显示已保存的聊天记录
-        history.forEach((msg, index) => {
+        displayHistory.forEach((msg, index) => {
             try {
                 // 检查是否需要显示时间分隔条（超过10分钟）
                 if (msg.timestamp && lastTimestamp) {
@@ -4200,11 +4941,12 @@ function openChatDetail(name, lastMessage, avatarColor) {
                 }
                 lastTimestamp = msg.timestamp || lastTimestamp;
                 
+                const actualIndex = hasMoreHistory ? hiddenCount + index : index;
                 if (msg.isEmoji && msg.emojiUrl) {
                     // 表情消息
-                    addEmojiBubble(msg.emojiUrl, msg.type, false, index);
+                    addEmojiBubble(msg.emojiUrl, msg.type, false, actualIndex);
                 } else if (msg.text) {
-                    addChatBubble(msg.text, msg.type || 'received', false, index);
+                    addChatBubble(msg.text, msg.type || 'received', false, actualIndex);
                 }
             } catch (e) {
                 console.warn('加载消息失败:', index, e);
@@ -4218,7 +4960,42 @@ function openChatDetail(name, lastMessage, avatarColor) {
     saveViewState('chatDetail', { contactId: name, contactName: currentChatName, avatarColor });
 }
 
+// 加载完整聊天历史
+function loadFullChatHistory(name) {
+    chatDetailMessages.innerHTML = '';
+    
+    const history = getChatHistory(name);
+    let lastTimestamp = null;
+    
+    history.forEach((msg, index) => {
+        try {
+            if (msg.timestamp && lastTimestamp) {
+                const timeDiff = msg.timestamp - lastTimestamp;
+                if (timeDiff > 10 * 60 * 1000) {
+                    addTimeSeperator(msg.timestamp);
+                }
+            }
+            lastTimestamp = msg.timestamp || lastTimestamp;
+            
+            if (msg.isEmoji && msg.emojiUrl) {
+                addEmojiBubble(msg.emojiUrl, msg.type, false, index);
+            } else if (msg.text) {
+                addChatBubble(msg.text, msg.type || 'received', false, index);
+            }
+        } catch (e) {
+            console.warn('加载消息失败:', index, e);
+        }
+    });
+    
+    // 滚动到顶部显示最早的消息
+    chatDetailMessages.scrollTop = 0;
+}
+
 function closeChatDetail() {
+    // 关闭前再次确保清除该联系人的未读计数
+    if (originalChatName) {
+        clearUnreadCount(originalChatName);
+    }
     chatDetailView.classList.remove('active');
     restoreBodyScrollIfIdle();
     saveViewState('sms');
@@ -4336,6 +5113,8 @@ function addChatBubble(text, type, save = true, historyIndex = null) {
     if (save) {
         history.push({ text, type, timestamp: Date.now() });
         saveChatHistory(originalChatName, history);
+        // 刷新消息列表，确保预览更新
+        loadSmsMessages();
     }
 }
 
@@ -4477,6 +5256,8 @@ function sendChatMessageOnly() {
         chatDetailInput.value = '';
         chatDetailInput.style.height = 'auto';
         chatDetailInput.focus();
+        // 刷新消息列表，确保对话显示
+        loadSmsMessages();
     }
 }
 
@@ -4489,6 +5270,8 @@ async function sendChatMessage() {
         addChatBubble(text, 'sent', true);
         chatDetailInput.value = '';
         chatDetailInput.style.height = 'auto';
+        // 刷新消息列表，确保对话显示
+        loadSmsMessages();
     }
     chatDetailInput.focus();
     
@@ -4513,6 +5296,92 @@ async function sendChatMessage() {
     } catch (e) {
         hideChatTyping();
         addChatBubble('消息发送失败', 'received', true);
+    }
+}
+
+// 发起通话
+async function startChatCall() {
+    const saved = getContactData(originalChatName);
+    const displayName = saved?.nickname || originalChatName;
+    
+    // 获取联系人人设
+    const contacts = getCustomContacts();
+    const contact = contacts.find(c => c.name === originalChatName);
+    const persona = contact?.persona || '';
+    
+    // 显示通话中状态
+    const callModal = document.createElement('div');
+    callModal.className = 'call-modal';
+    callModal.innerHTML = `
+        <div class="call-modal-content">
+            <div class="call-avatar" style="background: ${saved?.color || 'var(--accent)'}">
+                ${saved?.avatar ? `<img src="${saved.avatar}">` : displayName.charAt(0)}
+            </div>
+            <div class="call-name">${displayName}</div>
+            <div class="call-status">正在通话中...</div>
+            <div class="call-transcript" id="callTranscriptContent"></div>
+            <button class="call-end-btn" id="endCallBtn">挂断</button>
+        </div>
+    `;
+    document.body.appendChild(callModal);
+    
+    const transcriptDiv = document.getElementById('callTranscriptContent');
+    const endBtn = document.getElementById('endCallBtn');
+    
+    let callEnded = false;
+    endBtn.addEventListener('click', () => {
+        callEnded = true;
+        callModal.remove();
+    });
+    
+    // 调用AI生成通话内容
+    try {
+        const userData = getUserData();
+        const callPrompt = `你现在正在和用户进行电话通话。请生成一段自然的电话对话。
+
+【你的人设】
+${persona || '普通朋友'}
+
+【用户信息】
+用户名：${userData.name || '用户'}
+
+【要求】
+- 生成5-8轮对话
+- 格式：每行一句，用"我："或"${userData.name || '用户'}："开头
+- 对话要自然，符合电话交流的特点
+- 内容可以是日常闲聊、关心问候等
+
+直接输出对话内容，不要其他解释：`;
+
+        const response = await callAI(callPrompt, '');
+        
+        if (callEnded) return;
+        
+        // 解析并逐条显示对话
+        const lines = response.split('\n').filter(l => l.trim());
+        for (let i = 0; i < lines.length; i++) {
+            if (callEnded) break;
+            
+            const line = lines[i].trim();
+            const isMine = line.startsWith('我：') || line.startsWith('我:');
+            const text = line.replace(/^(我|[^：:]+)[：:]/, '').trim();
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `call-message ${isMine ? 'mine' : 'theirs'}`;
+            msgDiv.textContent = text;
+            transcriptDiv.appendChild(msgDiv);
+            transcriptDiv.scrollTop = transcriptDiv.scrollHeight;
+            
+            await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
+        }
+        
+        if (!callEnded) {
+            document.querySelector('.call-status').textContent = '通话结束';
+        }
+    } catch (e) {
+        if (!callEnded) {
+            document.querySelector('.call-status').textContent = '通话失败';
+        }
     }
 }
 
@@ -4567,10 +5436,24 @@ async function sendMessagesBySentence(text) {
         
         await sendSingleMessage(sentence);
         
+        // 检查用户是否仍在聊天界面，如果不在则增加未读计数
+        const isStillInChat = chatDetailView && chatDetailView.classList.contains('active');
+        if (!isStillInChat && originalChatName) {
+            addUnreadCount(originalChatName);
+        }
+        
         // 每条消息之间稍微延迟
         if (i < sentences.length - 1) {
             await new Promise(resolve => setTimeout(resolve, 200));
         }
+    }
+    
+    // 所有消息发送完成后，如果用户不在聊天界面则显示通知
+    const isStillInChat = chatDetailView && chatDetailView.classList.contains('active');
+    if (!isStillInChat && originalChatName) {
+        const saved = getContactData(originalChatName);
+        showWechatNotification(originalChatName, text, saved?.color, saved?.avatar);
+        console.log('【通知】用户已离开聊天界面，显示通知');
     }
 }
 
@@ -4789,7 +5672,7 @@ function saveCustomContacts(contacts) {
 function createNewContact() {
     const name = contactAddName.value.trim();
     if (!name) {
-        alert('请输入联系人名称');
+        alert('请输入真实姓名');
         return;
     }
     
@@ -5358,10 +6241,31 @@ ${emojiInfo ? '【表情包功能】\n' + emojiInfo + '\n可以在合适的时�
         messages.push({ role: 'system', content: otherContacts });
     }
     
-    // 6. 添加聊天历史（最近10条）
+    // 5.8 添加朋友圈动态（了解社交动态）
+    const momentsContext = getMomentsContext();
+    if (momentsContext) {
+        messages.push({ role: 'system', content: momentsContext });
+    }
+    
+    // 6. 添加聊天历史（最近20条，排除最后一条避免与当前消息重复）
     const history = getChatHistory(originalChatName);
-    const recentHistory = history.slice(-10);
-    recentHistory.forEach(msg => {
+    console.log('【短信AI】获取历史记录，联系人:', originalChatName, '历史条数:', history.length);
+    
+    // 排除最后一条（如果它是用户刚发送的消息，避免重复）
+    let historyToUse = [];
+    if (history.length > 0) {
+        const lastMsg = history[history.length - 1];
+        // 如果最后一条是用户发送的且与当前消息相同，则排除
+        if (lastMsg.type === 'sent' && lastMsg.text === userMessage) {
+            historyToUse = history.slice(-21, -1);
+        } else {
+            historyToUse = history.slice(-20);
+        }
+    }
+    
+    console.log('【短信AI】使用历史条数:', historyToUse.length);
+    
+    historyToUse.forEach(msg => {
         let content = msg.text;
         // 如果是表情，转换为更友好的格式
         if (msg.isEmoji) {
@@ -5376,9 +6280,13 @@ ${emojiInfo ? '【表情包功能】\n' + emojiInfo + '\n可以在合适的时�
         }
     });
     
-    // 7. 应用输入正则到当前用户消息
+    // 7. 应用输入正则到当前用户消息（只有在消息不在历史中时才添加）
     const processedMessage = applyRegexToInput(userMessage);
-    messages.push({ role: 'user', content: processedMessage });
+    // 检查是否需要添加当前消息（避免重复）
+    const lastAddedMsg = messages[messages.length - 1];
+    if (!lastAddedMsg || lastAddedMsg.role !== 'user' || lastAddedMsg.content !== processedMessage) {
+        messages.push({ role: 'user', content: processedMessage });
+    }
     
     return messages;
 }
@@ -5528,6 +6436,12 @@ ${sceneInfo ? sceneInfo + '\n\n' : ''}${getAllContactsInfo()}
         messages.push({ role: 'system', content: '[微信聊天记录]\n' + smsContext });
     }
     
+    // 4.7 添加朋友圈动态（了解社交动态）
+    const momentsContext = getMomentsContext();
+    if (momentsContext) {
+        messages.push({ role: 'system', content: momentsContext });
+    }
+    
     // 5. 添加历史消息（最近10条）
     const history = getOfflineHistory();
     const recentHistory = history.slice(-10);
@@ -5646,6 +6560,82 @@ function resetCustomFont() {
     localStorage.removeItem('fontConfig');
     document.documentElement.style.setProperty('--app-font', defaultFontStack);
     setFontStatus('success', '已恢复默认字体');
+}
+
+// ========== 自定义CSS功能 ==========
+function saveCustomCss(type, css) {
+    const config = JSON.parse(localStorage.getItem('customCssConfig')) || {};
+    config[type] = css;
+    localStorage.setItem('customCssConfig', JSON.stringify(config));
+    applyCustomCss(type, css);
+    
+    // 清除预览样式
+    if (type === 'global') {
+        removeCustomCss('global-preview');
+    }
+    
+    alert(css ? '样式已保存并应用！' : '样式已重置！');
+}
+
+function applyCustomCss(type, css) {
+    // 移除旧的样式
+    removeCustomCss(type);
+    
+    if (!css || !css.trim()) return;
+    
+    // 创建新的style标签
+    const style = document.createElement('style');
+    style.id = `custom-css-${type}`;
+    style.textContent = css;
+    document.head.appendChild(style);
+}
+
+function removeCustomCss(type) {
+    const existing = document.getElementById(`custom-css-${type}`);
+    if (existing) {
+        existing.remove();
+    }
+}
+
+function loadCustomCss() {
+    try {
+        const config = JSON.parse(localStorage.getItem('customCssConfig')) || {};
+        
+        // 加载全局样式
+        if (config.global) {
+            applyCustomCss('global', config.global);
+            if (globalCssInput) globalCssInput.value = config.global;
+        }
+        
+        // 加载气泡样式
+        if (config.bubble) {
+            applyCustomCss('bubble', config.bubble);
+            if (bubbleCssInput) bubbleCssInput.value = config.bubble;
+        }
+    } catch (e) {
+        console.warn('加载自定义CSS失败:', e);
+    }
+}
+
+function updateBubblePreview(css) {
+    // 更新预览区域的样式
+    const previewStyle = document.getElementById('bubble-preview-style');
+    if (previewStyle) {
+        previewStyle.remove();
+    }
+    
+    if (!css || !css.trim()) return;
+    
+    // 将.chat-bubble替换为.preview-bubble用于预览
+    let previewCss = css
+        .replace(/\.chat-bubble\.sent/g, '.preview-bubble.sent')
+        .replace(/\.chat-bubble\.received/g, '.preview-bubble.received')
+        .replace(/\.chat-bubble/g, '.preview-bubble');
+    
+    const style = document.createElement('style');
+    style.id = 'bubble-preview-style';
+    style.textContent = previewCss;
+    document.head.appendChild(style);
 }
 
 function restoreBodyScrollIfIdle() {
@@ -6609,6 +7599,7 @@ window.addEventListener('load', () => {
     applyTheme(savedTheme);
     loadApiConfig();
     loadFontConfig();
+    loadCustomCss();
     updateTemperatureValue(temperatureRange.value);
     updateSmsBadge();
     loadOfflineMessages();
