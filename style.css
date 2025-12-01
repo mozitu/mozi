@@ -6261,19 +6261,20 @@ body[data-theme="ancient"] {
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
+    width: 100vw;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.6);
-    z-index: 3000;
+    z-index: 9999;
     display: none;
     align-items: center;
     justify-content: center;
     padding: 20px;
     backdrop-filter: blur(4px);
+    box-sizing: border-box;
 }
 
 .inner-voice-modal.active {
-    display: flex;
+    display: flex !important;
     animation: fadeIn 0.3s ease;
 }
 

@@ -8658,3 +8658,6 @@ innerVoiceModal.addEventListener('click', (e) => {
         closeInnerVoiceModal();
     }
 });
+
+// 确保心声弹窗初始状态为关闭
+innerVoiceModal.classList.remove('active');
