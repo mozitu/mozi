@@ -3525,21 +3525,33 @@ body[data-theme="crimson"] .phone-chat-bubble.received {
     font-size: 18px;
 }
 
-.dark-barrage-item {
+.dark-popups-container {
     position: absolute;
-    right: -100%;
-    white-space: nowrap;
-    font-weight: 500;
-    animation: barrageFlow linear forwards;
-    letter-spacing: 1px;
-    font-family: 'Microsoft YaHei', sans-serif;
-    will-change: transform;
-    backface-visibility: hidden;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
 }
 
-@keyframes barrageFlow {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(calc(-100vw - 100%)); }
+.dark-popup-item {
+    position: absolute;
+    font-weight: 500;
+    letter-spacing: 1px;
+    font-family: 'Microsoft YaHei', sans-serif;
+    padding: 8px 14px;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 6px;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5) rotate(var(--rotate, 0deg));
+    transition: all 0.4s ease;
+    text-shadow: 0 0 10px currentColor;
+    white-space: nowrap;
+}
+
+.dark-popup-item.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(var(--rotate, 0deg));
 }
 
 .phone-app-label {

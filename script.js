@@ -763,20 +763,36 @@ async function showDarkHeartBarrage() {
     if (barrages && barrages.length > 0) {
         // 弹幕生成成功，渐入播放音乐
         fadeIn();
-        // 持续发射弹幕，循环使用内容
+        
+        // 创建弹窗容器
+        const popupsContainer = document.createElement('div');
+        popupsContainer.className = 'dark-popups-container';
+        container.appendChild(popupsContainer);
+        
+        // 一条一条显示弹窗
+        let index = 0;
         let running = true;
-        const launchBarrage = () => {
+        const showNextPopup = () => {
             if (!running) return;
-            // 同时发射1-2条弹幕（减少数量提升性能）
-            const count = 1 + Math.floor(Math.random() * 2);
-            for (let i = 0; i < count; i++) {
-                const text = barrages[Math.floor(Math.random() * barrages.length)];
-                setTimeout(() => createBarrageItem(container, text), i * 100);
-            }
-            // 每300-500ms发射一批（降低频率）
-            setTimeout(launchBarrage, 300 + Math.random() * 200);
+            if (index >= barrages.length) index = 0; // 循环
+            
+            createPopupItem(popupsContainer, barrages[index]);
+            index++;
+            
+            // 每500ms显示一条，快速铺满
+            setTimeout(showNextPopup, 500);
         };
-        launchBarrage();
+        
+        // 初始快速填充几条
+        for (let i = 0; i < 5; i++) {
+            setTimeout(() => {
+                if (running) {
+                    createPopupItem(popupsContainer, barrages[i % barrages.length]);
+                }
+            }, i * 100);
+        }
+        index = 5;
+        setTimeout(showNextPopup, 600);
         
         // 关闭函数
         const closeBarrage = () => {
@@ -790,12 +806,12 @@ async function showDarkHeartBarrage() {
         // 点击关闭
         container.addEventListener('click', closeBarrage);
         
-        // 20秒后自动关闭
+        // 25秒后自动关闭
         setTimeout(() => {
             if (container.parentNode) {
                 closeBarrage();
             }
-        }, 20000);
+        }, 25000);
     } else {
         bgm.pause();
         container.innerHTML = `
@@ -809,34 +825,34 @@ async function showDarkHeartBarrage() {
     }
 }
 
-// 创建单条弹幕
-function createBarrageItem(container, text) {
+// 创建单条弹窗
+function createPopupItem(container, text) {
     const item = document.createElement('div');
-    item.className = 'dark-barrage-item';
+    item.className = 'dark-popup-item';
     item.textContent = text;
     
-    // 随机位置和样式
-    const top = Math.random() * 85 + 5; // 5% - 90%
-    const duration = 4 + Math.random() * 2; // 4-6秒（稍慢更稳定）
-    const fontSize = 14 + Math.random() * 10; // 14-24px
-    
+    // 随机位置（居中铺满屏幕）
+    const top = Math.random() * 95; // 0% - 95%
+    const left = Math.random() * 95; // 0% - 95%
     item.style.top = `${top}%`;
-    item.style.animationDuration = `${duration}s`;
+    item.style.left = `${left}%`;
+    
+    // 随机旋转角度
+    const rotate = (Math.random() - 0.5) * 30; // -15° ~ 15°
+    item.style.setProperty('--rotate', `${rotate}deg`);
+    
+    // 随机大小（手机端适配）
+    const fontSize = 15 + Math.random() * 7; // 15-22px
     item.style.fontSize = `${fontSize}px`;
     
     // 随机颜色 - 暗红、暗紫、血红
     const colors = ['#8b0000', '#4a0033', '#660033', '#990033', '#cc0033', '#800020'];
     item.style.color = colors[Math.floor(Math.random() * colors.length)];
     
-    // 少量发光效果（减少性能消耗）
-    if (Math.random() > 0.8) {
-        item.style.textShadow = '0 0 8px currentColor';
-    }
-    
     container.appendChild(item);
     
-    // 动画结束后移除
-    item.addEventListener('animationend', () => item.remove());
+    // 触发动画
+    requestAnimationFrame(() => item.classList.add('show'));
 }
 
 // 生成扭曲的内心独白
