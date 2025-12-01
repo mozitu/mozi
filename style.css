@@ -3531,25 +3531,15 @@ body[data-theme="crimson"] .phone-chat-bubble.received {
     white-space: nowrap;
     font-weight: 500;
     animation: barrageFlow linear forwards;
-    text-shadow: 0 0 5px currentColor;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     font-family: 'Microsoft YaHei', sans-serif;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 @keyframes barrageFlow {
     0% { transform: translateX(0); }
     100% { transform: translateX(calc(-100vw - 100%)); }
-}
-
-/* 弹幕抖动效果 */
-.dark-barrage-item:nth-child(odd) {
-    animation: barrageFlow linear forwards, barrageShake 0.5s ease-in-out infinite;
-}
-
-@keyframes barrageShake {
-    0%, 100% { margin-top: 0; }
-    25% { margin-top: -2px; }
-    75% { margin-top: 2px; }
 }
 
 .phone-app-label {

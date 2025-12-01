@@ -767,14 +767,14 @@ async function showDarkHeartBarrage() {
         let running = true;
         const launchBarrage = () => {
             if (!running) return;
-            // 同时发射2-4条弹幕
-            const count = 2 + Math.floor(Math.random() * 3);
+            // 同时发射1-2条弹幕（减少数量提升性能）
+            const count = 1 + Math.floor(Math.random() * 2);
             for (let i = 0; i < count; i++) {
                 const text = barrages[Math.floor(Math.random() * barrages.length)];
-                setTimeout(() => createBarrageItem(container, text), i * 50);
+                setTimeout(() => createBarrageItem(container, text), i * 100);
             }
-            // 每100-200ms发射一批
-            setTimeout(launchBarrage, 100 + Math.random() * 100);
+            // 每300-500ms发射一批（降低频率）
+            setTimeout(launchBarrage, 300 + Math.random() * 200);
         };
         launchBarrage();
         
@@ -816,23 +816,21 @@ function createBarrageItem(container, text) {
     item.textContent = text;
     
     // 随机位置和样式
-    const top = Math.random() * 90 + 2; // 2% - 92%
-    const duration = 2.5 + Math.random() * 2; // 2.5-4.5秒（更快）
-    const fontSize = 14 + Math.random() * 14; // 14-28px
-    const opacity = 0.5 + Math.random() * 0.5; // 0.5-1
+    const top = Math.random() * 85 + 5; // 5% - 90%
+    const duration = 4 + Math.random() * 2; // 4-6秒（稍慢更稳定）
+    const fontSize = 14 + Math.random() * 10; // 14-24px
     
     item.style.top = `${top}%`;
     item.style.animationDuration = `${duration}s`;
     item.style.fontSize = `${fontSize}px`;
-    item.style.opacity = opacity;
     
     // 随机颜色 - 暗红、暗紫、血红
-    const colors = ['#8b0000', '#4a0033', '#660033', '#990033', '#cc0033', '#800020', '#4d0026', '#330000', '#550022'];
+    const colors = ['#8b0000', '#4a0033', '#660033', '#990033', '#cc0033', '#800020'];
     item.style.color = colors[Math.floor(Math.random() * colors.length)];
     
-    // 随机发光效果（更多概率）
-    if (Math.random() > 0.5) {
-        item.style.textShadow = '0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor';
+    // 少量发光效果（减少性能消耗）
+    if (Math.random() > 0.8) {
+        item.style.textShadow = '0 0 8px currentColor';
     }
     
     container.appendChild(item);
