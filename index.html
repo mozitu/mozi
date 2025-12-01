@@ -953,6 +953,16 @@
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
                     </button>
+                    <button class="theme-card" data-theme="crimson">
+                        <span class="theme-swatch theme-crimson"></span>
+                        <div class="theme-info">
+                            <span class="theme-name">黑红</span>
+                            <span class="theme-desc">暗黑猩红病娇</span>
+                        </div>
+                        <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </button>
                 </div>
             </section>
             <section class="api-section">
@@ -1034,23 +1044,40 @@
                         </div>
                     </div>
                     <div class="css-editor-wrap">
-                        <textarea class="css-editor" id="globalCssInput" placeholder="/* 全局样式示例 */
+                        <textarea class="css-editor" id="globalCssInput" placeholder="/* ===== 深蓝主题 ===== */
 :root {
     --bg-primary: #1a1a2e;
     --bg-secondary: #16213e;
     --accent: #e94560;
+    --accent-rgb: 233, 69, 96;
     --text-primary: #eaeaea;
+    --text-secondary: #a0a0a0;
+    --border: rgba(255,255,255,0.1);
+    --button-gradient: linear-gradient(135deg, #e94560, #ff6b8a);
 }
 
-/* 修改背景 */
-body {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+/* ===== 黑红主题 ===== */
+:root {
+    --bg-primary: #0d0d0d;
+    --bg-secondary: #1a1a1a;
+    --accent: #dc143c;
+    --accent-rgb: 220, 20, 60;
+    --text-primary: #f5f5f5;
+    --text-secondary: #888;
+    --border: rgba(220,20,60,0.2);
+    --button-gradient: linear-gradient(135deg, #dc143c, #8b0000);
 }
 
-/* 修改卡片样式 */
-.contact-card {
-    border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+/* ===== 暗紫主题 ===== */
+:root {
+    --bg-primary: #13111c;
+    --bg-secondary: #1e1a2e;
+    --accent: #9d4edd;
+    --accent-rgb: 157, 78, 221;
+    --text-primary: #e8e8e8;
+    --text-secondary: #9090a0;
+    --border: rgba(157,78,221,0.2);
+    --button-gradient: linear-gradient(135deg, #9d4edd, #c77dff);
 }"></textarea>
                     </div>
                 </div>
