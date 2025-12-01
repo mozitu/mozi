@@ -6207,3 +6207,220 @@ body[data-theme="ancient"] {
     font-size: 13px;
     font-weight: 500;
 }
+
+/* ========== 加载动画 ========== */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(var(--accent-rgb), 0.2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto;
+}
+
+.loading-spinner.small {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+}
+
+.app-loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 16px;
+}
+
+.app-loading-text {
+    color: var(--text-secondary);
+    font-size: 14px;
+    text-align: center;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* 刷新按钮加载状态 */
+.header-more-btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.header-more-btn.loading svg {
+    animation: spin 1s linear infinite;
+}
+
+/* ========== 心声弹窗 ========== */
+.inner-voice-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 3000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.inner-voice-modal.active {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.inner-voice-content {
+    background: var(--panel-bg);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.inner-voice-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.15), rgba(var(--accent-rgb), 0.05));
+    border-bottom: 1px solid rgba(var(--accent-rgb), 0.1);
+}
+
+.inner-voice-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
+}
+
+.inner-voice-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.inner-voice-avatar svg {
+    width: 24px;
+    height: 24px;
+    stroke: white;
+}
+
+.inner-voice-info {
+    flex: 1;
+}
+
+.inner-voice-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.inner-voice-time {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.inner-voice-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(var(--accent-rgb), 0.1);
+    border-radius: 50%;
+    font-size: 20px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.inner-voice-close:hover {
+    background: rgba(var(--accent-rgb), 0.2);
+    color: var(--text-primary);
+}
+
+.inner-voice-body {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    min-height: 200px;
+    max-height: 50vh;
+}
+
+.inner-voice-text {
+    color: var(--text-primary);
+    font-size: 15px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.inner-voice-text::before {
+    content: '"';
+    color: var(--accent);
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 4px;
+}
+
+.inner-voice-text::after {
+    content: '"';
+    color: var(--accent);
+    font-size: 24px;
+    font-weight: bold;
+    margin-left: 4px;
+}
+
+.inner-voice-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    gap: 16px;
+}
+
+.inner-voice-empty {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 40px 20px;
+}
+
+.inner-voice-empty svg {
+    width: 48px;
+    height: 48px;
+    stroke: var(--text-secondary);
+    opacity: 0.5;
+    margin-bottom: 12px;
+}

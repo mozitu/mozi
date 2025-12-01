@@ -217,6 +217,14 @@ const sceneDescription = document.getElementById('sceneDescription');
 const sceneClear = document.getElementById('sceneClear');
 const sceneSave = document.getElementById('sceneSave');
 const wechatNotificationContainer = document.getElementById('wechatNotificationContainer');
+const viewOfflineInnerVoiceBtn = document.getElementById('viewOfflineInnerVoiceBtn');
+const viewChatInnerVoiceBtn = document.getElementById('viewChatInnerVoiceBtn');
+const innerVoiceModal = document.getElementById('innerVoiceModal');
+const innerVoiceAvatar = document.getElementById('innerVoiceAvatar');
+const innerVoiceName = document.getElementById('innerVoiceName');
+const innerVoiceTime = document.getElementById('innerVoiceTime');
+const innerVoiceBody = document.getElementById('innerVoiceBody');
+const innerVoiceClose = document.getElementById('innerVoiceClose');
 
 const defaultFontStack = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif";
 
@@ -578,6 +586,27 @@ document.getElementById('resetBubbleCssBtn')?.addEventListener('click', () => {
     updateBubblePreview('');
 });
 
+// 复制CSS示例按钮
+document.getElementById('copyGlobalCssExample')?.addEventListener('click', () => {
+    const example = globalCssInput.placeholder;
+    navigator.clipboard.writeText(example).then(() => {
+        const btn = document.getElementById('copyGlobalCssExample');
+        const originalText = btn.textContent;
+        btn.textContent = '已复制！';
+        setTimeout(() => btn.textContent = originalText, 1500);
+    });
+});
+
+document.getElementById('copyBubbleCssExample')?.addEventListener('click', () => {
+    const example = bubbleCssInput.placeholder;
+    navigator.clipboard.writeText(example).then(() => {
+        const btn = document.getElementById('copyBubbleCssExample');
+        const originalText = btn.textContent;
+        btn.textContent = '已复制！';
+        setTimeout(() => btn.textContent = originalText, 1500);
+    });
+});
+
 // 气泡CSS实时预览
 bubbleCssInput?.addEventListener('input', () => {
     updateBubblePreview(bubbleCssInput.value);
@@ -632,36 +661,329 @@ phoneAppRefreshBtn.addEventListener('click', () => {
     refreshCurrentPhoneApp();
 });
 
-// 刷新当前APP内容
+// 刷新当前APP内容 - AI生成专属内容
 async function refreshCurrentPhoneApp() {
     if (!currentPhoneApp || !currentViewingContact) return;
     
-    // 删除已有的生成内容，重新生成
-    switch(currentPhoneApp) {
-        case 'call':
-            deletePhoneDataItem(currentViewingContact, 'call', -1); // -1表示删除全部
-            loadPhoneAppCall();
-            break;
-        case 'note':
-            deletePhoneDataItem(currentViewingContact, 'note', -1);
-            loadPhoneAppNote();
-            break;
-        case 'browser':
-            deletePhoneDataItem(currentViewingContact, 'browser', -1);
-            loadPhoneAppBrowser();
-            break;
-        case 'diary':
-            deletePhoneDataItem(currentViewingContact, 'diary', -1);
-            loadPhoneAppDiary();
-            break;
-        case 'peek':
-            deletePhoneDataItem(currentViewingContact, 'peek', -1);
-            loadPhoneAppPeek();
-            break;
-        case 'sms':
-            // 刷新消息列表
-            loadPhoneSmsMessages();
-            break;
+    const saved = getContactData(currentViewingContact);
+    const displayName = saved?.nickname || currentViewingContact;
+    
+    // 获取联系人人设
+    const customContacts = getCustomContacts();
+    const contactInfo = customContacts.find(c => c.name === currentViewingContact);
+    const persona = contactInfo?.persona || '一个普通人';
+    
+    // 获取用户信息
+    const userSettings = getUserSettings();
+    const userName = userSettings.name || '用户';
+    const userPersona = userSettings.persona || '一个普通人';
+    
+    // 获取剧情上下文
+    const chatHistory = getChatHistory(currentViewingContact);
+    let plotContext = '';
+    if (chatHistory.length > 0) {
+        const recent = chatHistory.slice(-8);
+        plotContext = recent.map(msg => {
+            const sender = msg.type === 'sent' ? userName : displayName;
+            const text = msg.isEmoji ? '[表情]' : (msg.text || '');
+            return `${sender}: ${text}`;
+        }).join('\n');
+    }
+    
+    // 显示加载动画（只有按钮显示loading，窥视APP才显示内容区加载动画）
+    phoneAppRefreshBtn.classList.add('loading');
+    
+    // 只有窥视APP需要内容区加载动画
+    if (currentPhoneApp === 'peek') {
+        phoneAppDetailContent.innerHTML = `
+            <div class="app-loading-container">
+                <div class="loading-spinner"></div>
+                <div class="app-loading-text">正在窥视${displayName}的内心...</div>
+            </div>
+        `;
+    }
+    
+    try {
+        let prompt = '';
+        let dataKey = '';
+        
+        switch(currentPhoneApp) {
+            case 'call':
+                dataKey = 'callHistory';
+                prompt = `你现在完全扮演"${displayName}"。
+
+【${displayName}的人设】
+${persona}
+
+【用户信息】
+用户名：${userName}
+${plotContext ? `\n【近期剧情】\n${plotContext}\n` : ''}
+
+请生成${displayName}手机里的1-3条通话记录（JSON格式）。
+要求：
+- 通话对象是${displayName}的朋友/家人/同事，不能是${userName}
+- 要符合${displayName}的人设和社交圈
+- 包含通话类型(incoming来电/outgoing去电/missed未接)、时间、时长、通话内容
+
+返回格式（不要markdown标记）：
+[
+  {
+    "name": "通话对象名",
+    "type": "incoming",
+    "time": "今天 14:30",
+    "duration": "5分钟",
+    "transcript": [
+      {"speaker": "对方", "text": "喂，在吗？"},
+      {"speaker": "我", "text": "在的，怎么了？"}
+    ]
+  }
+]`;
+                break;
+                
+            case 'note':
+                dataKey = 'notes';
+                prompt = `你现在完全扮演"${displayName}"。
+
+【${displayName}的人设】
+${persona}
+
+【用户信息】
+用户名：${userName}
+${plotContext ? `\n【近期剧情】\n${plotContext}\n` : ''}
+
+请生成${displayName}手机便签里的2-3条便签内容（JSON格式）。
+要求：
+- 内容要符合${displayName}的人设、性格和生活
+- 可以是待办事项、日常记录、想法感悟、小秘密等
+- 每条便签20-80字
+
+返回格式（不要markdown标记）：
+["便签内容1", "便签内容2", "便签内容3"]`;
+                break;
+                
+            case 'browser':
+                dataKey = 'browser';
+                prompt = `你现在完全扮演"${displayName}"。
+
+【${displayName}的人设】
+${persona}
+
+【用户信息】
+用户名：${userName}
+${plotContext ? `\n【近期剧情】\n${plotContext}\n` : ''}
+
+请生成${displayName}手机浏览器的2-4条浏览记录（JSON格式）。
+要求：
+- 浏览内容要符合${displayName}的人设、兴趣和职业
+- URL要看起来真实（可以是编造的但格式正确）
+- 包含网页内容摘要
+
+返回格式（不要markdown标记）：
+[
+  {
+    "title": "网页标题",
+    "url": "https://example.com/path",
+    "time": "今天 15:20",
+    "content": "网页主要内容摘要，50-100字"
+  }
+]`;
+                break;
+                
+            case 'diary':
+                dataKey = 'diary';
+                prompt = `你现在完全扮演"${displayName}"。
+
+【${displayName}的人设】
+${persona}
+
+【用户信息】
+用户名：${userName}（${displayName}认识的人）
+${plotContext ? `\n【近期剧情】\n${plotContext}\n` : ''}
+
+请以${displayName}的口吻写1-2篇日记（JSON格式）。
+要求：
+- 完全以${displayName}第一人称视角
+- 内容要符合人设，可以涉及对${userName}的看法
+- 每篇日记100-200字，要有真实感
+
+返回格式（不要markdown标记）：
+[
+  {
+    "time": "2024年12月1日 晴",
+    "content": "日记内容..."
+  }
+]`;
+                break;
+                
+            case 'peek':
+                dataKey = 'peek';
+                prompt = `【任务】
+你需要以"${displayName}"的身份，写一篇500字左右的内心独白日记。
+
+【${displayName}的人设】
+${persona}
+
+【对象信息】
+${displayName}认识"${userName}"。
+${userPersona ? `${userName}的情况：${userPersona}` : ''}
+${plotContext ? `\n【近期互动】\n${plotContext}\n` : ''}
+
+【要求】
+1. 完全以${displayName}的第一人称视角
+2. 写出内心真实想法、情感波动、秘密心事
+3. 可以涉及对${userName}的复杂情感
+4. 要有文学性，像真实的私密日记
+
+直接输出日记内容，不要任何标题或格式：`;
+                break;
+                
+            case 'sms':
+                // SMS使用现有的对话生成逻辑
+                dataKey = 'conversations';
+                const existingConversations = getGeneratedPhoneData(currentViewingContact, 'conversations') || [];
+                prompt = `你现在完全扮演"${displayName}"。
+
+【${displayName}的人设】
+${persona}
+
+【用户信息】
+用户名：${userName}
+${plotContext ? `\n【近期剧情】\n${plotContext}\n` : ''}
+${existingConversations.length > 0 ? `【已有对话好友】\n${existingConversations.map(c => c.friend).join('、')}\n` : ''}
+
+请生成${displayName}微信里和1-2个朋友的新对话（JSON格式）。
+要求：
+- 对话对象是${displayName}的朋友，不能是${userName}
+- 每个对话4-8条消息，有来有回
+- 内容符合${displayName}的人设和社交习惯
+
+返回格式（不要markdown标记）：
+[
+  {
+    "friend": "朋友名字",
+    "messages": [
+      {"sender": "朋友名字", "text": "消息内容"},
+      {"sender": "我", "text": "回复内容"}
+    ]
+  }
+]`;
+                break;
+        }
+        
+        if (!prompt) {
+            phoneAppRefreshBtn.classList.remove('loading');
+            return;
+        }
+        
+        // 调用AI
+        const response = await callAI(prompt, '');
+        
+        // 解析响应
+        let generatedData;
+        if (currentPhoneApp === 'peek') {
+            // peek返回纯文本
+            generatedData = response.trim();
+        } else {
+            // 其他返回JSON
+            let jsonStr = response;
+            jsonStr = jsonStr.replace(/```json\s*/gi, '').replace(/```\s*/g, '');
+            
+            // 找JSON数组或对象
+            const firstBracket = jsonStr.indexOf('[');
+            const firstBrace = jsonStr.indexOf('{');
+            let startIndex = -1;
+            let isArray = false;
+            
+            if (firstBracket !== -1 && (firstBrace === -1 || firstBracket < firstBrace)) {
+                startIndex = firstBracket;
+                isArray = true;
+            } else if (firstBrace !== -1) {
+                startIndex = firstBrace;
+                isArray = false;
+            }
+            
+            if (startIndex === -1) {
+                throw new Error('无法解析AI响应');
+            }
+            
+            // 找匹配的结束符
+            const endChar = isArray ? ']' : '}';
+            const startChar = isArray ? '[' : '{';
+            let count = 0;
+            let endIndex = -1;
+            let inString = false;
+            let escapeNext = false;
+            
+            for (let i = startIndex; i < jsonStr.length; i++) {
+                const char = jsonStr[i];
+                if (escapeNext) { escapeNext = false; continue; }
+                if (char === '\\') { escapeNext = true; continue; }
+                if (char === '"') { inString = !inString; continue; }
+                if (inString) continue;
+                if (char === startChar) count++;
+                else if (char === endChar) {
+                    count--;
+                    if (count === 0) { endIndex = i; break; }
+                }
+            }
+            
+            if (endIndex === -1) throw new Error('JSON格式错误');
+            
+            jsonStr = jsonStr.substring(startIndex, endIndex + 1);
+            generatedData = JSON.parse(jsonStr);
+        }
+        
+        // 保存生成的数据
+        if (currentPhoneApp === 'sms') {
+            // 对话需要合并处理
+            const existingConversations = getGeneratedPhoneData(currentViewingContact, 'conversations') || [];
+            let updatedConversations = [...existingConversations];
+            
+            generatedData.forEach(newConv => {
+                const existingIndex = updatedConversations.findIndex(c => c.friend === newConv.friend);
+                if (existingIndex !== -1) {
+                    updatedConversations[existingIndex].messages = [
+                        ...updatedConversations[existingIndex].messages,
+                        ...newConv.messages
+                    ];
+                } else {
+                    updatedConversations.unshift(newConv);
+                }
+            });
+            
+            saveGeneratedPhoneData(currentViewingContact, 'conversations', updatedConversations);
+        } else {
+            // 其他类型追加到现有数据
+            const existingData = getGeneratedPhoneData(currentViewingContact, dataKey) || (currentPhoneApp === 'peek' ? '' : []);
+            
+            if (currentPhoneApp === 'peek') {
+                saveGeneratedPhoneData(currentViewingContact, dataKey, generatedData);
+            } else if (Array.isArray(generatedData)) {
+                const newData = [...generatedData, ...(Array.isArray(existingData) ? existingData : [])];
+                saveGeneratedPhoneData(currentViewingContact, dataKey, newData);
+            }
+        }
+        
+        // 重新加载当前APP显示
+        switch(currentPhoneApp) {
+            case 'call': loadPhoneAppCall(); break;
+            case 'note': loadPhoneAppNote(); break;
+            case 'browser': loadPhoneAppBrowser(); break;
+            case 'diary': loadPhoneAppDiary(); break;
+            case 'peek': loadPhoneAppPeek(); break;
+            case 'sms': loadPhoneSmsMessages(); break;
+        }
+        
+    } catch (error) {
+        console.error('生成内容失败:', error);
+        phoneAppDetailContent.innerHTML = `
+            <div class="app-content-empty">
+                生成失败: ${error.message}<br><br>
+                点击刷新按钮重试
+            </div>
+        `;
+    } finally {
+        phoneAppRefreshBtn.classList.remove('loading');
     }
 }
 
@@ -4064,6 +4386,18 @@ async function regenerateOfflineMessage(messageDiv) {
         hideTypingIndicator();
         if (aiResponse) {
             parseAndDispatchAIResponse(aiResponse);
+            
+            // 生成心声（后台异步）
+            const offlinePattern = /<offline\s+contact="([^"]+)">/gi;
+            let charMatch;
+            const characters = new Set();
+            while ((charMatch = offlinePattern.exec(aiResponse)) !== null) {
+                characters.add(charMatch[1]);
+            }
+            characters.forEach(charName => {
+                const contextText = `用户行动：${lastUserMessage}\n场景中发生的事：${aiResponse.substring(0, 500)}`;
+                generateInnerVoice(charName, 'offline', contextText);
+            });
         }
     } catch (e) {
         hideTypingIndicator();
@@ -4315,6 +4649,21 @@ async function sendMessage() {
         hideTypingIndicator();
         if (aiResponse) {
             parseAndDispatchAIResponse(aiResponse);
+            
+            // 生成心声（后台异步，不阻塞）
+            // 提取AI响应中出现的角色
+            const offlinePattern = /<offline\s+contact="([^"]+)">/gi;
+            let charMatch;
+            const characters = new Set();
+            while ((charMatch = offlinePattern.exec(aiResponse)) !== null) {
+                characters.add(charMatch[1]);
+            }
+            
+            // 为每个出现的角色生成心声
+            characters.forEach(charName => {
+                const contextText = `用户行动：${message || '（继续）'}\n场景中发生的事：${aiResponse.substring(0, 500)}`;
+                generateInnerVoice(charName, 'offline', contextText);
+            });
         }
         // 检查是否需要总结
         checkAndSummarizeOffline();
@@ -5290,6 +5639,10 @@ async function sendChatMessage() {
         if (aiResponse) {
             // 按句子分割发送（一句话一个气泡）
             await sendMessagesBySentence(aiResponse);
+            
+            // 生成心声（后台异步，不阻塞）
+            const contextText = `用户说：${text || '（继续对话）'}\n${originalChatName}回复：${aiResponse}`;
+            generateInnerVoice(originalChatName, 'online', contextText);
         }
         // 检查是否需要总结
         checkAndSummarizeSms(originalChatName);
@@ -8138,3 +8491,170 @@ updateSceneDisplay();
 
 // 初始化主题文字
 applyThemeText(document.body.dataset.theme || 'warm');
+
+// ========== 心声功能 ==========
+
+// 获取心声数据
+function getInnerVoice(contactName, mode = 'offline') {
+    const key = `innerVoice_${mode}_${contactName}`;
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+}
+
+// 保存心声数据
+function saveInnerVoice(contactName, mode, content) {
+    const key = `innerVoice_${mode}_${contactName}`;
+    const data = {
+        content: content,
+        time: new Date().toLocaleString('zh-CN'),
+        contactName: contactName
+    };
+    localStorage.setItem(key, JSON.stringify(data));
+}
+
+// 显示心声弹窗
+function showInnerVoiceModal(contactName, mode = 'offline') {
+    const contacts = getCustomContacts();
+    const contact = contacts.find(c => c.name === contactName);
+    const saved = getContactData(contactName);
+    const displayName = saved?.nickname || contactName;
+    
+    // 设置头像
+    if (saved?.avatar) {
+        innerVoiceAvatar.innerHTML = `<img src="${saved.avatar}">`;
+    } else {
+        innerVoiceAvatar.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
+    }
+    if (saved?.color) {
+        innerVoiceAvatar.style.background = saved.color;
+    }
+    
+    innerVoiceName.textContent = `${displayName}的心声`;
+    
+    // 获取现有心声
+    const existingVoice = getInnerVoice(contactName, mode);
+    
+    if (existingVoice && existingVoice.content) {
+        innerVoiceTime.textContent = existingVoice.time;
+        innerVoiceBody.innerHTML = `<div class="inner-voice-text">${escapeHtml(existingVoice.content)}</div>`;
+    } else {
+        innerVoiceTime.textContent = '';
+        innerVoiceBody.innerHTML = `
+            <div class="inner-voice-empty">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                <div>暂无心声</div>
+                <div style="font-size: 12px; margin-top: 8px;">继续对话后会自动生成</div>
+            </div>
+        `;
+    }
+    
+    innerVoiceModal.classList.add('active');
+}
+
+// 关闭心声弹窗
+function closeInnerVoiceModal() {
+    innerVoiceModal.classList.remove('active');
+}
+
+// 生成心声内容
+async function generateInnerVoice(contactName, mode, contextText) {
+    const contacts = getCustomContacts();
+    const contact = contacts.find(c => c.name === contactName);
+    const persona = contact?.persona || '';
+    
+    if (!persona) return; // 没有人设就不生成
+    
+    const saved = getContactData(contactName);
+    const displayName = saved?.nickname || contactName;
+    
+    const userSettings = getUserSettings();
+    const userName = userSettings.name || '用户';
+    
+    const modeText = mode === 'offline' ? '线下面对面互动' : '线上微信聊天';
+    
+    const prompt = `【任务】根据刚才的${modeText}，写出"${displayName}"此刻的内心独白。
+
+【${displayName}的人设】
+${persona}
+
+【用户信息】
+用户名：${userName}
+
+【刚才发生的事】
+${contextText}
+
+【要求】
+1. 完全以${displayName}第一人称视角
+2. 写出此刻内心真实的想法和情感，50-150字
+3. 要符合人设，体现性格特点
+4. 可以包含对${userName}的看法、感受
+5. 语气要自然，像真实的内心活动
+
+直接输出内心独白，不要任何标题或格式：`;
+
+    try {
+        const config = JSON.parse(localStorage.getItem('apiConfig')) || {};
+        if (!config.url || !config.model) return;
+        
+        const response = await callAI(prompt, '');
+        if (response) {
+            saveInnerVoice(contactName, mode, response.trim());
+        }
+    } catch (e) {
+        console.error('生成心声失败:', e);
+    }
+}
+
+// 线下模式心声按钮点击
+viewOfflineInnerVoiceBtn.addEventListener('click', () => {
+    // 获取当前场景中的角色
+    const history = getOfflineHistory();
+    if (history.length === 0) {
+        alert('暂无线下对话');
+        return;
+    }
+    
+    // 从历史记录中找出出现的角色
+    const characters = new Set();
+    history.forEach(msg => {
+        if (msg.type === 'ai' && msg.roleName) {
+            characters.add(msg.roleName);
+        }
+    });
+    
+    if (characters.size === 0) {
+        alert('暂无角色出现');
+        return;
+    }
+    
+    // 如果只有一个角色，直接显示
+    if (characters.size === 1) {
+        const charName = [...characters][0];
+        showInnerVoiceModal(charName, 'offline');
+        return;
+    }
+    
+    // 多个角色，让用户选择
+    const charList = [...characters];
+    const choice = prompt(`请选择要查看心声的角色（输入序号）：\n${charList.map((c, i) => `${i + 1}. ${c}`).join('\n')}`);
+    const index = parseInt(choice) - 1;
+    if (index >= 0 && index < charList.length) {
+        showInnerVoiceModal(charList[index], 'offline');
+    }
+});
+
+// 线上聊天心声按钮点击
+viewChatInnerVoiceBtn.addEventListener('click', () => {
+    if (!originalChatName) return;
+    showInnerVoiceModal(originalChatName, 'online');
+});
+
+// 关闭心声弹窗
+innerVoiceClose.addEventListener('click', closeInnerVoiceModal);
+innerVoiceModal.addEventListener('click', (e) => {
+    if (e.target === innerVoiceModal) {
+        closeInnerVoiceModal();
+    }
+});
