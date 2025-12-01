@@ -776,6 +776,14 @@ body[data-theme="ancient"] {
     stroke: var(--text-primary);
 }
 
+#blockContactBtn.blocked {
+    background: rgba(255, 71, 87, 0.2);
+}
+
+#blockContactBtn.blocked svg {
+    stroke: #ff4757;
+}
+
 .sms-back:hover,
 .settings-back:hover {
     background: rgba(var(--accent-rgb), 0.3);
@@ -806,6 +814,7 @@ body[data-theme="ancient"] {
     box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.15);
     transition: all 0.3s ease;
     animation: slideIn 0.3s ease;
+    position: relative;
 }
 
 .sms-message-item:hover {
@@ -1029,6 +1038,49 @@ body[data-theme="ancient"] {
     color: white;
     align-self: flex-end;
     border-bottom-right-radius: 4px;
+}
+
+.chat-bubble.system {
+    background: rgba(var(--accent-rgb), 0.15);
+    color: var(--text-secondary);
+    align-self: center;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    max-width: 90%;
+}
+
+.chat-system-msg {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+    padding: 8px 16px;
+    margin: 8px 0;
+}
+
+.blocked-message-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.blocked-message-icon {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    background: #fa5151;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+    order: 1;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    line-height: 1;
+    padding-bottom: 1px;
 }
 
 /* 时间分隔条 */
@@ -1354,6 +1406,9 @@ body[data-theme="ancient"] {
 }
 
 .sms-unread-badge {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
     min-width: 20px;
     height: 20px;
     background: #ff4757;
@@ -1365,8 +1420,6 @@ body[data-theme="ancient"] {
     align-items: center;
     justify-content: center;
     padding: 0 6px;
-    flex-shrink: 0;
-    align-self: center;
 }
 
 /* 线下消息长按菜单 */
@@ -3271,6 +3324,206 @@ body[data-theme="ancient"] {
     stroke: var(--accent);
 }
 
+.phone-app-icon.heart-app {
+    background: linear-gradient(135deg, #ff6b9d 0%, #ff4757 100%);
+}
+
+.phone-app-icon.heart-app svg {
+    stroke: white;
+    fill: rgba(255, 255, 255, 0.3);
+}
+
+/* 心声确认弹窗 */
+.heart-confirm-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.heart-confirm-dialog.active {
+    opacity: 1;
+}
+
+.heart-confirm-content {
+    background: var(--panel-bg);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    max-width: 280px;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.heart-confirm-dialog.active .heart-confirm-content {
+    transform: scale(1);
+}
+
+.heart-confirm-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, #ff6b9d 0%, #ff4757 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: heartBeat 1.5s ease-in-out infinite;
+}
+
+.heart-confirm-icon svg {
+    width: 32px;
+    height: 32px;
+    stroke: white;
+    fill: rgba(255, 255, 255, 0.3);
+}
+
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.heart-confirm-text {
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.heart-confirm-btns {
+    display: flex;
+    gap: 12px;
+}
+
+.heart-confirm-cancel,
+.heart-confirm-ok {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.heart-confirm-cancel {
+    background: rgba(var(--accent-rgb), 0.1);
+    color: var(--text-secondary);
+}
+
+.heart-confirm-cancel:hover {
+    background: rgba(var(--accent-rgb), 0.2);
+}
+
+.heart-confirm-ok {
+    background: linear-gradient(135deg, #ff6b9d 0%, #ff4757 100%);
+    color: white;
+}
+
+.heart-confirm-ok:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.4);
+}
+
+/* 黑暗心声弹幕 */
+.dark-barrage-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10001;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.dark-barrage-container.active {
+    opacity: 1;
+}
+
+.dark-barrage-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(20, 0, 10, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
+    animation: darkPulse 3s ease-in-out infinite;
+}
+
+@keyframes darkPulse {
+    0%, 100% { background: radial-gradient(ellipse at center, rgba(20, 0, 10, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%); }
+    50% { background: radial-gradient(ellipse at center, rgba(40, 0, 20, 0.9) 0%, rgba(10, 0, 5, 0.95) 100%); }
+}
+
+.dark-barrage-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #8b0000;
+    font-size: 16px;
+}
+
+.dark-loading-heart {
+    font-size: 48px;
+    color: #8b0000;
+    animation: darkHeartBeat 0.8s ease-in-out infinite;
+    text-shadow: 0 0 20px #8b0000, 0 0 40px #4a0033;
+}
+
+@keyframes darkHeartBeat {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.3); opacity: 1; }
+}
+
+.dark-barrage-empty {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #666;
+    font-size: 18px;
+}
+
+.dark-barrage-item {
+    position: absolute;
+    right: -100%;
+    white-space: nowrap;
+    font-weight: 500;
+    animation: barrageFlow linear forwards;
+    text-shadow: 0 0 5px currentColor;
+    letter-spacing: 2px;
+    font-family: 'Microsoft YaHei', sans-serif;
+}
+
+@keyframes barrageFlow {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-100vw - 100%)); }
+}
+
+/* 弹幕抖动效果 */
+.dark-barrage-item:nth-child(odd) {
+    animation: barrageFlow linear forwards, barrageShake 0.5s ease-in-out infinite;
+}
+
+@keyframes barrageShake {
+    0%, 100% { margin-top: 0; }
+    25% { margin-top: -2px; }
+    75% { margin-top: 2px; }
+}
+
 .phone-app-label {
     color: white;
     font-size: 11px;
@@ -3396,6 +3649,52 @@ body[data-theme="ancient"] {
     align-self: flex-end;
     border-bottom-right-radius: 4px;
     box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.3);
+}
+
+/* 拉黑相关样式 */
+.phone-chat-blocked-notice {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+    padding: 12px 16px;
+    background: none;
+}
+
+.phone-chat-bubble-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.phone-chat-bubble-wrapper.sent {
+    justify-content: flex-end;
+}
+
+.phone-chat-bubble-wrapper.received {
+    justify-content: flex-start;
+}
+
+.msg-fail-icon {
+    width: 18px;
+    height: 18px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    flex-shrink: 0;
+    cursor: help;
+}
+
+.phone-chat-system-msg {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+    padding: 8px 0;
 }
 
 /* 手机短信列表样式 */
@@ -5097,6 +5396,16 @@ body[data-theme="ancient"] {
     font-size: 12px;
     line-height: 1.5;
     border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.moment-comment:hover {
+    background: rgba(var(--accent-rgb), 0.05);
+}
+
+.moment-comment:active {
+    background: rgba(var(--accent-rgb), 0.1);
 }
 
 .moment-comment:last-child {
@@ -6424,4 +6733,339 @@ body[data-theme="ancient"] {
     stroke: var(--text-secondary);
     opacity: 0.5;
     margin-bottom: 12px;
+}
+
+/* ========== 手机聊天历史折叠 ========== */
+.phone-chat-history-section {
+    margin-bottom: 12px;
+}
+
+.phone-chat-history-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: rgba(var(--accent-rgb), 0.1);
+    border-radius: 20px;
+    color: var(--accent);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.phone-chat-history-toggle:hover {
+    background: rgba(var(--accent-rgb), 0.2);
+}
+
+.phone-chat-history-toggle svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+}
+
+.phone-chat-history-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(var(--accent-rgb), 0.03);
+    border-radius: 12px;
+    max-height: 500px;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+.phone-chat-history-container.collapsed {
+    display: none;
+}
+
+.phone-chat-divider {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+    padding: 8px 0;
+    opacity: 0.7;
+}
+
+/* ========== 小剧场 ========== */
+.theater-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--panel-bg);
+    z-index: 1500;
+    display: none;
+    flex-direction: column;
+}
+
+.theater-view.active {
+    display: flex;
+}
+
+.theater-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.theater-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-secondary);
+    text-align: center;
+    gap: 12px;
+}
+
+.theater-empty svg {
+    width: 64px;
+    height: 64px;
+    opacity: 0.4;
+    margin-bottom: 8px;
+}
+
+.theater-script {
+    background: var(--panel-bg);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.theater-script-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.theater-script-title svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--accent);
+}
+
+.theater-script-meta {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(var(--accent-rgb), 0.1);
+}
+
+.theater-scene {
+    margin-bottom: 20px;
+}
+
+.theater-scene-header {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: rgba(var(--accent-rgb), 0.1);
+    border-radius: 8px;
+}
+
+.theater-line {
+    margin-bottom: 12px;
+    padding-left: 12px;
+    border-left: 3px solid transparent;
+}
+
+.theater-line-character {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.theater-line-dialog {
+    color: var(--text-primary);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.theater-line-action {
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.theater-narration {
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+    padding: 12px 20px;
+    background: rgba(var(--accent-rgb), 0.05);
+    border-radius: 8px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.theater-end {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(var(--accent-rgb), 0.2);
+}
+
+/* ========== 双重身份 ========== */
+.dual-identity-section {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(var(--accent-rgb), 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(var(--accent-rgb), 0.1);
+}
+
+.dual-identity-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.dual-identity-toggle .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+    background: none;
+    border-radius: 26px;
+}
+
+.dual-identity-toggle .toggle-switch::after {
+    display: none;
+}
+
+.dual-identity-toggle .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.dual-identity-toggle .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--bg-secondary);
+    transition: 0.3s;
+    border-radius: 26px;
+}
+
+.dual-identity-toggle .toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dual-identity-toggle .toggle-switch input:checked + .toggle-slider {
+    background-color: var(--accent);
+}
+
+.dual-identity-toggle .toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(22px);
+}
+
+.dual-identity-fields {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeIn 0.3s ease;
+}
+
+.dual-identity-fields .form-field span {
+    font-size: 13px;
+    color: var(--accent);
+}
+
+.dual-identity-fields textarea,
+.dual-identity-fields input[type="text"] {
+    font-size: 13px;
+    background: var(--panel-bg);
+}
+
+.dual-identity-hint {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: rgba(var(--accent-rgb), 0.1);
+    border-radius: 8px;
+    line-height: 1.5;
+}
+
+.dual-identity-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(var(--accent-rgb), 0.15);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-primary);
+}
+
+.dual-identity-info #linkedIdentityName {
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.dual-identity-pair {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dual-identity-item {
+    padding: 12px;
+    background: var(--panel-bg);
+    border-radius: 10px;
+    border: 1px solid rgba(var(--accent-rgb), 0.15);
+}
+
+.dual-identity-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dual-identity-label::before {
+    content: '';
+    width: 4px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 2px;
 }

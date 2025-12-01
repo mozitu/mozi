@@ -171,6 +171,16 @@
                     </div>
                     <div class="app-label">手机</div>
                 </div>
+                <div class="app-item" id="theaterApp">
+                    <div class="app-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 11a9 9 0 0 1 9 9"></path>
+                            <path d="M4 4a16 16 0 0 1 16 16"></path>
+                            <circle cx="5" cy="19" r="1"></circle>
+                        </svg>
+                    </div>
+                    <div class="app-label">小剧场</div>
+                </div>
             </div>
         </div>
     </div>
@@ -305,6 +315,15 @@
                                 </svg>
                             </div>
                             <span class="phone-app-label">窥视</span>
+                        </div>
+                        
+                        <div class="phone-app-item" id="phoneAppHeart">
+                            <div class="phone-app-icon heart-app">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                            </div>
+                            <span class="phone-app-label">心声</span>
                         </div>
                     </div>
                     
@@ -529,6 +548,12 @@
                 <h2 id="chatDetailName">对话</h2>
             </div>
             <div class="chat-detail-actions">
+                <button class="header-more-btn" id="blockContactBtn" title="拉黑">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                    </svg>
+                </button>
                 <button class="header-more-btn" id="viewChatInnerVoiceBtn" title="查看心声">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -618,12 +643,48 @@
             </div>
             <label class="form-field">
                 <span>真实姓名</span>
-                <input type="text" id="contactAddName" placeholder="输入真实姓名">
+                <input type="text" id="contactAddName" placeholder="输入真实姓名（必填）">
             </label>
             <label class="form-field">
-                <span>人设/系统提示词</span>
-                <textarea id="contactAddPersona" rows="8" placeholder="输入角色人设或系统提示词..."></textarea>
+                <span>总人设（共享）</span>
+                <textarea id="contactAddPersona" rows="4" placeholder="输入此人的基础人设..."></textarea>
             </label>
+            <div class="dual-identity-section">
+                <div class="dual-identity-toggle">
+                    <span>双重身份</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="addDualIdentityToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="dual-identity-fields" id="addDualIdentityFields" style="display: none;">
+                    <div class="dual-identity-hint">开启后将创建两个联系人，共用一台手机，但微信账号不同</div>
+                    <div class="dual-identity-pair">
+                        <div class="dual-identity-item">
+                            <div class="dual-identity-label">表面身份</div>
+                            <label class="form-field">
+                                <span>名称</span>
+                                <input type="text" id="addSurfaceName" placeholder="表面身份的名称">
+                            </label>
+                            <label class="form-field">
+                                <span>人设</span>
+                                <textarea id="addSurfacePersona" rows="3" placeholder="表面身份的人设..."></textarea>
+                            </label>
+                        </div>
+                        <div class="dual-identity-item">
+                            <div class="dual-identity-label">背地里身份</div>
+                            <label class="form-field">
+                                <span>名称</span>
+                                <input type="text" id="addHiddenName" placeholder="背地里身份的名称">
+                            </label>
+                            <label class="form-field">
+                                <span>人设</span>
+                                <textarea id="addHiddenPersona" rows="3" placeholder="背地里身份的人设..."></textarea>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <button class="primary-button contact-save-btn" id="saveContactAdd">创建联系人</button>
         </div>
     </div>
@@ -667,6 +728,30 @@
                 <span>角色人设</span>
                 <textarea id="contactPersonaEdit" rows="8" placeholder="输入角色人设或系统提示词..."></textarea>
             </label>
+            <div class="dual-identity-section">
+                <div class="dual-identity-toggle">
+                    <span>双重身份</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="dualIdentityToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="dual-identity-fields" id="dualIdentityFields" style="display: none;">
+                    <div class="dual-identity-hint">开启后将创建一个新联系人作为此人的另一个身份</div>
+                    <label class="form-field">
+                        <span>另一个身份的名称</span>
+                        <input type="text" id="altIdentityName" placeholder="输入另一个身份的名称（如：暗影、夜行者）">
+                    </label>
+                    <label class="form-field">
+                        <span>另一个身份的人设</span>
+                        <textarea id="altIdentityPersona" rows="4" placeholder="输入另一个身份的人设..."></textarea>
+                    </label>
+                    <div class="dual-identity-info" id="dualIdentityInfo" style="display: none;">
+                        <span>已关联身份：</span>
+                        <span id="linkedIdentityName"></span>
+                    </div>
+                </div>
+            </div>
             <div class="contact-edit-actions">
                 <button class="primary-button contact-save-btn" id="saveContactEdit">保存修改</button>
                 <button class="danger-button" id="deleteContact">删除联系人</button>
@@ -1334,6 +1419,37 @@ body {
 
     <!-- 微信消息通知容器 -->
     <div class="wechat-notification-container" id="wechatNotificationContainer"></div>
+
+    <!-- 小剧场界面 -->
+    <div class="theater-view" id="theaterView">
+        <div class="sms-header">
+            <button class="sms-back" id="theaterBack">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2>小剧场</h2>
+            <button class="header-more-btn" id="theaterRefreshBtn" title="生成新剧本">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <polyline points="1 20 1 14 7 14"></polyline>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="theater-content" id="theaterContent">
+            <div class="theater-empty">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg>
+                <div>点击右上角刷新按钮</div>
+                <div>AI会为你生成一段精彩的小剧场</div>
+            </div>
+        </div>
+    </div>
 
     <!-- 心声弹窗 -->
     <div class="inner-voice-modal" id="innerVoiceModal">
