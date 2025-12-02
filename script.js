@@ -87,6 +87,9 @@ const pullModelsBtn = document.getElementById('pullModelsBtn');
 const testConnectionBtn = document.getElementById('testConnectionBtn');
 const saveConfigBtn = document.getElementById('saveConfigBtn');
 const apiStatus = document.getElementById('apiStatus');
+const apiSchemeSelect = document.getElementById('apiSchemeSelect');
+const saveSchemeBtn = document.getElementById('saveSchemeBtn');
+const deleteSchemeBtn = document.getElementById('deleteSchemeBtn');
 const fontUrlInput = document.getElementById('fontUrlInput');
 const previewFontBtn = document.getElementById('previewFontBtn');
 const applyFontBtn = document.getElementById('applyFontBtn');
@@ -246,6 +249,121 @@ const innerVoiceBody = document.getElementById('innerVoiceBody');
 const innerVoiceClose = document.getElementById('innerVoiceClose');
 
 const defaultFontStack = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif";
+
+// 默认CSS示例
+const defaultGlobalCss = `/* ===== 全局主题变量示例 =====
+ * 修改下方变量值可自定义主题外观
+ * 保存后立即生效，会覆盖当前选中的主题
+ */
+
+/* 页面背景色 */
+body {
+    --bg-gradient: #fff5f0;
+}
+
+/* 面板背景与阴影 */
+.container,
+.drawer,
+.settings-view,
+.sms-view,
+.chat-detail-view {
+    --panel-bg: rgba(255, 255, 255, 0.9);
+    --panel-shadow: 0 10px 40px rgba(255, 182, 193, 0.3);
+}
+
+/* 主色调 */
+body {
+    --accent: #ffb6c1;
+    --accent-light: #ffc0cb;
+    --accent-rgb: 255, 182, 193;
+}
+
+/* 文字颜色 */
+body {
+    --text-primary: #5a4a3a;
+    --text-secondary: #c9a982;
+}
+
+/* 按钮渐变色 */
+body {
+    --button-gradient: #ffb6c1;
+    --button-hover-gradient: #ffa5b3;
+}
+
+/* 消息气泡背景 */
+body {
+    --message-bg: rgba(255, 255, 255, 0.85);
+    --chat-gradient: #fffaf5;
+}
+
+/* 抽屉和头像颜色 */
+body {
+    --drawer-bg: rgba(255, 255, 255, 0.98);
+    --sms-avatar-gradient: #ffb6c1;
+}
+
+/* ===== 深色主题示例 =====
+body {
+    --bg-gradient: #0d0d0d;
+    --panel-bg: rgba(20, 20, 20, 0.98);
+    --panel-shadow: 0 10px 40px rgba(220, 20, 60, 0.3);
+    --chat-gradient: #1a1a1a;
+    --text-primary: #f5f5f5;
+    --text-secondary: #888888;
+    --accent: #dc143c;
+    --accent-light: #ff3355;
+    --accent-rgb: 220, 20, 60;
+    --button-gradient: linear-gradient(135deg, #dc143c, #8b0000);
+    --button-hover-gradient: linear-gradient(135deg, #ff3355, #dc143c);
+    --message-bg: rgba(50, 50, 50, 0.95);
+    --sms-avatar-gradient: linear-gradient(135deg, #dc143c, #8b0000);
+    --drawer-bg: rgba(15, 15, 15, 0.98);
+}
+*/`;
+
+const defaultBubbleCss = `/* ===== 气泡样式示例 =====
+ * 修改下方样式可自定义聊天气泡外观
+ * 保存后立即生效
+ */
+
+/* 发送的消息气泡（右侧/自己） */
+.chat-bubble.sent {
+    background: linear-gradient(135deg, #ffb6c1 0%, #ffa5b3 100%);
+    border-radius: 18px 18px 4px 18px;
+    box-shadow: 0 4px 15px rgba(255, 182, 193, 0.4);
+    color: #5a4a3a;
+}
+
+/* 接收的消息气泡（左侧/对方） */
+.chat-bubble.received {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 18px 18px 18px 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    color: #5a4a3a;
+}
+
+/* 气泡通用样式 */
+.chat-bubble {
+    font-size: 15px;
+    line-height: 1.6;
+    padding: 12px 16px;
+    max-width: 75%;
+}
+
+/* 气泡hover效果 */
+.chat-bubble:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    transition: all 0.2s ease;
+}
+
+/* 旁白消息样式 */
+.message.narration {
+    background: rgba(255, 182, 193, 0.15);
+    border-left: 3px solid var(--accent);
+    color: var(--text-secondary);
+    font-style: italic;
+}`;
 
 // 清除线下历史
 clearOfflineHistoryBtn.addEventListener('click', () => {
@@ -606,8 +724,9 @@ document.getElementById('saveGlobalCssBtn')?.addEventListener('click', () => {
 });
 
 document.getElementById('resetGlobalCssBtn')?.addEventListener('click', () => {
-    globalCssInput.value = '';
+    globalCssInput.value = defaultGlobalCss;
     saveCustomCss('global', '');
+    applyCustomCss('global-preview', '');
 });
 
 document.getElementById('saveBubbleCssBtn')?.addEventListener('click', () => {
@@ -615,15 +734,14 @@ document.getElementById('saveBubbleCssBtn')?.addEventListener('click', () => {
 });
 
 document.getElementById('resetBubbleCssBtn')?.addEventListener('click', () => {
-    bubbleCssInput.value = '';
+    bubbleCssInput.value = defaultBubbleCss;
     saveCustomCss('bubble', '');
     updateBubblePreview('');
 });
 
 // 复制CSS示例按钮
 document.getElementById('copyGlobalCssExample')?.addEventListener('click', () => {
-    const example = globalCssInput.placeholder;
-    navigator.clipboard.writeText(example).then(() => {
+    navigator.clipboard.writeText(defaultGlobalCss).then(() => {
         const btn = document.getElementById('copyGlobalCssExample');
         const originalText = btn.textContent;
         btn.textContent = '已复制！';
@@ -632,8 +750,7 @@ document.getElementById('copyGlobalCssExample')?.addEventListener('click', () =>
 });
 
 document.getElementById('copyBubbleCssExample')?.addEventListener('click', () => {
-    const example = bubbleCssInput.placeholder;
-    navigator.clipboard.writeText(example).then(() => {
+    navigator.clipboard.writeText(defaultBubbleCss).then(() => {
         const btn = document.getElementById('copyBubbleCssExample');
         const originalText = btn.textContent;
         btn.textContent = '已复制！';
@@ -3820,9 +3937,11 @@ function loadOfflineMessages() {
         }
     });
     
-    // 加载完成后直接定位到底部（不使用滚动动画）
+    // 加载完成后直接定位到底部（使用双重 requestAnimationFrame 确保 DOM 完全渲染）
     requestAnimationFrame(() => {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        requestAnimationFrame(() => {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
     });
 }
 
@@ -7397,6 +7516,98 @@ function saveApiConfig() {
     setApiStatus('success', '配置已保存');
 }
 
+// ========== API 方案管理 ==========
+
+function getApiSchemes() {
+    try {
+        return JSON.parse(localStorage.getItem('apiSchemes')) || {};
+    } catch {
+        return {};
+    }
+}
+
+function saveApiSchemes(schemes) {
+    localStorage.setItem('apiSchemes', JSON.stringify(schemes));
+}
+
+function loadApiSchemeList() {
+    const schemes = getApiSchemes();
+    apiSchemeSelect.innerHTML = '<option value="">-- 选择已保存的方案 --</option>';
+    Object.keys(schemes).forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        apiSchemeSelect.appendChild(option);
+    });
+}
+
+function saveCurrentAsScheme() {
+    const name = prompt('请输入方案名称：');
+    if (!name || !name.trim()) return;
+    
+    const schemeName = name.trim();
+    const schemes = getApiSchemes();
+    
+    if (schemes[schemeName] && !confirm(`方案"${schemeName}"已存在，是否覆盖？`)) {
+        return;
+    }
+    
+    schemes[schemeName] = {
+        url: apiUrlInput.value,
+        key: apiKeyInput.value,
+        model: apiModelSelect.value,
+        temperature: Number(temperatureRange.value),
+    };
+    
+    saveApiSchemes(schemes);
+    loadApiSchemeList();
+    apiSchemeSelect.value = schemeName;
+    setApiStatus('success', `方案"${schemeName}"已保存`);
+}
+
+function loadScheme(name) {
+    const schemes = getApiSchemes();
+    const scheme = schemes[name];
+    if (!scheme) return;
+    
+    apiUrlInput.value = scheme.url || '';
+    apiKeyInput.value = scheme.key || '';
+    if (scheme.temperature !== undefined) {
+        temperatureRange.value = scheme.temperature;
+        updateTemperatureValue(scheme.temperature);
+    }
+    if (scheme.model) {
+        ensureModelOption(scheme.model);
+        apiModelSelect.value = scheme.model;
+    }
+    setApiStatus('success', `已加载方案"${name}"`);
+}
+
+function deleteCurrentScheme() {
+    const name = apiSchemeSelect.value;
+    if (!name) {
+        setApiStatus('error', '请先选择一个方案');
+        return;
+    }
+    
+    if (!confirm(`确定要删除方案"${name}"吗？`)) return;
+    
+    const schemes = getApiSchemes();
+    delete schemes[name];
+    saveApiSchemes(schemes);
+    loadApiSchemeList();
+    setApiStatus('success', `方案"${name}"已删除`);
+}
+
+// 方案管理事件监听
+saveSchemeBtn.addEventListener('click', saveCurrentAsScheme);
+deleteSchemeBtn.addEventListener('click', deleteCurrentScheme);
+apiSchemeSelect.addEventListener('change', (e) => {
+    if (e.target.value) {
+        loadScheme(e.target.value);
+    }
+});
+
 // ========== AI 消息处理 ==========
 
 // 获取启用的预设
@@ -8129,12 +8340,18 @@ function loadCustomCss() {
         if (config.global) {
             applyCustomCss('global', config.global);
             if (globalCssInput) globalCssInput.value = config.global;
+        } else {
+            // 没有保存的样式时显示默认示例（但不应用）
+            if (globalCssInput) globalCssInput.value = defaultGlobalCss;
         }
         
         // 加载气泡样式
         if (config.bubble) {
             applyCustomCss('bubble', config.bubble);
             if (bubbleCssInput) bubbleCssInput.value = config.bubble;
+        } else {
+            // 没有保存的样式时显示默认示例（但不应用）
+            if (bubbleCssInput) bubbleCssInput.value = defaultBubbleCss;
         }
     } catch (e) {
         console.warn('加载自定义CSS失败:', e);
@@ -9125,6 +9342,7 @@ window.addEventListener('load', () => {
     const savedTheme = localStorage.getItem('chatTheme') || 'warm';
     applyTheme(savedTheme);
     loadApiConfig();
+    loadApiSchemeList();
     loadFontConfig();
     loadCustomCss();
     updateTemperatureValue(temperatureRange.value);
@@ -9132,6 +9350,13 @@ window.addEventListener('load', () => {
     loadOfflineMessages();
     restoreViewState();
     messageInput.focus();
+    
+    // 额外的后备：确保线下模式消息区域滚动到底部
+    setTimeout(() => {
+        if (messagesContainer.scrollHeight > messagesContainer.clientHeight) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }, 100);
 });
 
 // ========== 表情库功能 ==========

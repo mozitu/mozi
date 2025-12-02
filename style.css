@@ -128,6 +128,78 @@ body[data-theme="crimson"] .phone-chat-bubble.received {
     border: 1px solid rgba(220, 20, 60, 0.2);
 }
 
+/* 深色主题输入框样式 - 使用深色背景让浅色文字可见 */
+body[data-theme="crimson"] .input-field,
+body[data-theme="cyber"] .input-field {
+    background: rgba(30, 30, 30, 0.9);
+    color: #f5f5f5;
+}
+
+body[data-theme="crimson"] .input-field:focus,
+body[data-theme="cyber"] .input-field:focus {
+    background: rgba(40, 40, 40, 0.95);
+}
+
+body[data-theme="crimson"] .input-field::placeholder,
+body[data-theme="cyber"] .input-field::placeholder {
+    color: #888;
+}
+
+/* 深色主题浏览器内容弹窗样式 */
+body[data-theme="crimson"] .browser-content-wrapper,
+body[data-theme="cyber"] .browser-content-wrapper {
+    background: rgba(25, 25, 25, 0.98);
+}
+
+body[data-theme="crimson"] .browser-content-header,
+body[data-theme="cyber"] .browser-content-header {
+    background: rgba(35, 35, 35, 0.98);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body[data-theme="crimson"] .browser-page-title,
+body[data-theme="crimson"] .browser-page-content,
+body[data-theme="cyber"] .browser-page-title,
+body[data-theme="cyber"] .browser-page-content {
+    color: #f0f0f0;
+}
+
+/* 深色主题表单输入框和文本区域样式 */
+body[data-theme="crimson"] .form-field input,
+body[data-theme="crimson"] .form-field select,
+body[data-theme="crimson"] .form-field textarea,
+body[data-theme="crimson"] textarea,
+body[data-theme="cyber"] .form-field input,
+body[data-theme="cyber"] .form-field select,
+body[data-theme="cyber"] .form-field textarea,
+body[data-theme="cyber"] textarea {
+    background: rgba(30, 30, 30, 0.9);
+    color: #f0f0f0;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+body[data-theme="crimson"] .form-field input:focus,
+body[data-theme="crimson"] .form-field select:focus,
+body[data-theme="crimson"] .form-field textarea:focus,
+body[data-theme="crimson"] textarea:focus,
+body[data-theme="cyber"] .form-field input:focus,
+body[data-theme="cyber"] .form-field select:focus,
+body[data-theme="cyber"] .form-field textarea:focus,
+body[data-theme="cyber"] textarea:focus {
+    background: rgba(40, 40, 40, 0.95);
+}
+
+body[data-theme="crimson"] .chat-detail-input textarea,
+body[data-theme="cyber"] .chat-detail-input textarea {
+    background: rgba(30, 30, 30, 0.9);
+    color: #f0f0f0;
+}
+
+body[data-theme="crimson"] .chat-detail-input textarea:focus,
+body[data-theme="cyber"] .chat-detail-input textarea:focus {
+    background: rgba(40, 40, 40, 0.95);
+}
+
 .container {
     width: 100%;
     max-width: 800px;
@@ -1833,6 +1905,29 @@ body[data-theme="crimson"] .phone-chat-bubble.received {
     width: 18px;
     height: 18px;
     stroke: currentColor;
+}
+
+.api-scheme-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    margin-bottom: 18px;
+}
+
+.api-scheme-row .scheme-select-field {
+    flex: 1;
+}
+
+.api-scheme-row .scheme-btn {
+    padding: 10px 12px;
+    min-width: auto;
+    height: 44px;
+}
+
+.api-scheme-row .scheme-btn.danger:hover {
+    background: rgba(220, 53, 69, 0.1);
+    border-color: #dc3545;
+    color: #dc3545;
 }
 
 .api-grid {
